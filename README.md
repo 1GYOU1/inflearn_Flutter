@@ -11,9 +11,7 @@
 
 ### 📌 배우는 내용
 - Dart언어 마스터하기
-    - section 0
-        - Dart 언어 완전정복  
-            - Dart #1 기본기
+    - [section 0 - Dart 언어 완전정복](https://github.com/1GYOU1/inflearn_Flutter/tree/main/section_0)
 - Flutter로 예쁜 UI 제작하기
 - SQLite 데이터베이스 활용하기
 - 동영상 플레이어 앱 제작하기
