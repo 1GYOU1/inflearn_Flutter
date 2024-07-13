@@ -1,3 +1,5 @@
+# Dart #2 객체지향 프로그래밍 (Object Oriented Programming)
+
 ### 객체지향 프로그래밍의 정의
 
 - 영어로는 OOP (Object Oriented Programming)
@@ -320,6 +322,75 @@ class Employee {
 
 ### interface
 
-```dart
+- 선언되어 있는 형태(구조)를 강제적으로 지킬 수 있도록 함.
+- dart에서의 interface는 interface라는 키워드를 사용하지 않고, class를 사용한다.
+- 다른 개발자들과 서로 소통을 할 필요 없이, 해당 인터페이스를 사용해야 한다고 정의해 놓았을 경우, 어떤 값들을 클래스에 지정해 놔야하는지 쉽게 알 수 있음.
+- `abstract` - instance로 사용하지 말라는 의미.
 
+```dart
+void main(){
+  BoyGroup bts = BoyGroup('BTS');
+  GirlGroup redVelvet = GirlGroup('레드벨벳');
+
+  bts.sayName(); // 제 이름은 BTS입니다.
+  redVelvet.sayName(); // 제 이름은 레드벨벳입니다.
+
+  print(bts is IdolInterface); // true
+  print(bts is BoyGroup); // true
+  print(bts is GirlGroup); // false
+
+  print(redVelvet is IdolInterface); // true
+  print(redVelvet is BoyGroup); // false
+  print(redVelvet is GirlGroup); // true
+}
+// interface
+abstract class IdolInterface{
+  String name;
+  IdolInterface(this.name);
+  void sayName(){}
+}
+
+class BoyGroup implements IdolInterface{
+  String name;
+  BoyGroup(this.name);
+  void sayName(){
+    print('제 이름은 $name입니다.');
+  }
+}
+
+class GirlGroup implements IdolInterface{
+  String name;
+  GirlGroup(this.name);
+  void sayName(){
+    print('제 이름은 $name입니다.');
+  }
+}
+```
+
+### generic
+
+- 타입을 외부에서 받을때 사용한다.
+
+```dart
+void main(){
+  Lecture<String, String> lecture1 = Lecture('123', 'abc');
+
+  lecture1.printIdType(); // String
+
+  Lecture<int, String> lecture2 = Lecture(4567, 'def');
+
+  lecture2.printIdType(); // int
+}
+
+// generic - 타입을 외부에서 받을때 사용
+class Lecture<T, X> { // -> 아무 이름 지으면 됨.
+  final T id;
+  final X name;
+
+  Lecture(this.id, this.name);
+
+  void printIdType(){
+    print(id.runtimeType);
+  }
+}
 ```
