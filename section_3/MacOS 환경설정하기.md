@@ -75,6 +75,8 @@ https://docs.flutter.dev/get-started/install/macos/mobile-ios
 
 ![스크린샷 2024-07-17 오후 11 19 54](https://github.com/user-attachments/assets/d90ee637-f0d5-42d4-8098-5ade69d36807)
 
+MacOS XCode 설치 커맨드
+
 ```
 sudo xcode-select --install
 sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
@@ -117,3 +119,21 @@ https://developer.android.com/studio?hl=ko
 ![스크린샷 2024-07-17 오후 11 54 34](https://github.com/user-attachments/assets/cb6c21cf-2769-4d9a-b47d-3169a8d62c5b)
 ![스크린샷 2024-07-17 오후 11 59 08](https://github.com/user-attachments/assets/cff921c3-b999-4fb4-87b5-05b0fd21daae)
 ![스크린샷 2024-07-17 오후 11 53 32](https://github.com/user-attachments/assets/73eb1f02-202c-4574-bf16-6500d0e168b2)
+
+Android Home 환경변수 등록 코드
+
+>$ export ANDROID_HOME={경로}
+
+예시
+>$ export ANDROID_HOME=/Users/1gyou1/Library/Android/sdk
+
+![스크린샷 2024-07-18 오전 12 11 01](https://github.com/user-attachments/assets/db022257-60b5-4f60-a6d5-a33bcef9c333)
+
+Android License 동의 커맨드
+
+>$ flutter doctor --android-licenses
+
+![스크린샷 2024-07-18 오전 12 13 24](https://github.com/user-attachments/assets/73fdc6a8-59c3-4169-8b30-f896644bf8d5)
+
+### Android Emulator 세팅하기
+
