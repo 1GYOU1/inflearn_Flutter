@@ -1,27 +1,27 @@
-
-
-
-참고 url
-[https://codefactory.notion.site/Flutter-Mac-df8222ac8afa4446ab03ae2980ef6591](https://www.notion.so/df8222ac8afa4446ab03ae2980ef6591?pvs=21)
-
-https://linktr.ee/codefactory_official
+# MacOS 환경설정하기
 
 ### 소개 및 시스템 사양 확인하기
 
+① 하단 페이지 접속 -> macOS 클릭 -> ios 선택. -> 맥 OS 설치 가이드 페이지로 이동
+
 https://docs.flutter.dev/get-started/install/macos
 
-macOS 클릭 -> 저는 ios 클릭함.
+<br>
 
-맥 OS 설치 가이드 페이지로 이동
+② 맥 사양 확인하기 (M칩인지 인텔인지) 
 
-맥 사양 확인하기 M칩인지 인텔인지 ?
+<br>
+
+내 맥북은 M2
 
 ![스크린샷 2024-07-17 오후 11 15 12](https://github.com/user-attachments/assets/10340e9f-0680-43eb-958e-fdcb638afd57)
 
+<br>
+<br>
 
 ### [M시리즈 애플 실리콘만] Rosetta 설치하기
 
-페이지 내에 코드 복사, 터미널에 붙여넣기
+① 페이지 내에 코드 복사, 터미널에 붙여넣기
 
 https://docs.flutter.dev/get-started/install/macos/mobile-ios
 
@@ -29,53 +29,85 @@ https://docs.flutter.dev/get-started/install/macos/mobile-ios
 
 ![스크린샷 2024-07-17 오후 10 54 45](https://github.com/user-attachments/assets/6ff81ae4-7730-415b-81a9-3f68bbd1d7ea)
 
+<br>
+<br>
+
 ### homebrew 설치하기
+
+① 하단 페이지에 접속해서 터미널에 명령어 작성하여 설치
 
 https://brew.sh/ko/
 
-Shell 타입 확인 커맨드
+>$ /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+<br>
+
+② Shell 타입 확인 커맨드
 >$ echo $SHELL
 
-Brew 환경변수에 등록하는 커맨드
-- /bin/zsh
+<br>
+
+③ Brew 환경변수에 등록하는 커맨드
+- /bin/zsh 가 나올 경우
 ```
 echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> $HOME/.zshrc
 eval "$(/opt/homebrew/bin/brew shellenv)"
 ```
-- /bin/bash
+- /bin/bash 가 나올 경우
 ```
 echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> $HOME/.bashrc
 eval "$(/opt/homebrew/bin/brew shellenv)"
 ```
 
+<br>
+
+내 맥북은 /bin/zsh
+
 ![스크린샷 2024-07-17 오후 11 00 44](https://github.com/user-attachments/assets/35234d55-935a-4e4d-8c9c-668a103b19a7)
+
+<br>
+<br>
 
 ### Flutter SDK 설치 방법 1 - Brew로 설치하기
 
-Brew를 이용한 Flutter 설치 커맨드
+① Brew를 이용한 Flutter 설치 커맨드
 
 >$ brew install --cask flutter
 
-homebrew 사용해서 flutter를 설치했을때 하단과 같이 체크된 flutter 설치 현황 리스트가 나오면 된다.
-모든게 다 체크되어있지 않고, 에러가 있어도 리스트만 나오면 됨 !
+![스크린샷 2024-07-17 오후 11 03 00](https://github.com/user-attachments/assets/7e05a646-9e42-4c16-bf36-626edd125256)
+
+<br>
+
+② homebrew 사용해서 flutter를 설치했을때 하단과 같이 체크된 flutter 설치 현황 리스트가 나오면 된다.
+모든게 다 체크되어있지 않고, 에러가 있어도 리스트만 나오면 됨 ! -> 추후에 에러 없앨 예정
 
 >$ flutter doctor
 
-![스크린샷 2024-07-17 오후 11 03 00](https://github.com/user-attachments/assets/7e05a646-9e42-4c16-bf36-626edd125256)
+![스크린샷 2024-07-21 오후 1 36 02](https://github.com/user-attachments/assets/7c681ef6-accb-4b90-bd0f-2077b666f93b)
 
+<br>
+<br>
 
-### Flutter SDK 설치 방법 - 직접 설치하기
+### Flutter SDK 설치 방법 - 직접 설치하기(Brew로 설치가 잘 안될 경우)
 
 하단 페이지에서 플러터 SDK 직접 다운로드해서 사용
 
 https://docs.flutter.dev/get-started/install/macos/mobile-ios
 
+- 저는 Brew로 설치가 잘 됐기 때문에 skip...!
+
+<br>
+<br>
 
 ### XCode 설치하기
 
+① 애플스토어에서 Xcode 검색하고 설치하기
+
 ![스크린샷 2024-07-17 오후 11 19 54](https://github.com/user-attachments/assets/d90ee637-f0d5-42d4-8098-5ade69d36807)
 
-MacOS XCode 설치 커맨드
+<br>
+
+② Xcode를 실행하기 전 MacOS XCode 설치 커맨드 입력
 
 ```
 sudo xcode-select --install
@@ -87,21 +119,31 @@ sudo xcodebuild -runFirstLaunch
 
 ![스크린샷 2024-07-17 오후 11 22 20](https://github.com/user-attachments/assets/1cb2908c-a880-49ca-be3e-89384d5fc2bd)
 
+<br>
+
+③ Xcode 실행한 화면
+
 ![스크린샷 2024-07-17 오후 11 23 45](https://github.com/user-attachments/assets/d4ad3f59-f9c2-4c5b-82a9-b72dc3798c8a)
 
-디바이스 기기 추가하기
+<br>
+
+④ 디바이스 기기 추가하기
 
 xcode 실행 -> 메뉴 window -> devices ans Simulators 클릭
 -> 왼쪽 하단 + 버튼 클릭 -> Os version 셀렉트박스 클릭 -> Download more simulator runtimes... 선택
-->
 
 ![스크린샷 2024-07-17 오후 11 25 43](https://github.com/user-attachments/assets/7960f8c5-5255-4957-8692-1b9f5cb0d3e8)
 
 ![스크린샷-2024-07-17-오후-11 30 11](https://github.com/user-attachments/assets/6e6adc58-e8f3-499d-8b70-008ed7ed0499)
 
-상단 3개 다운로드
+<br>
+
+⑤ 상단 3개 다운로드
 
 ![스크린샷 2024-07-17 오후 11 46 34](https://github.com/user-attachments/assets/ead49164-ee87-47df-9884-df189787991b)
+
+<br>
+<br>
 
 ### Android Studio 설치하기
 
@@ -137,3 +179,22 @@ Android License 동의 커맨드
 
 ### Android Emulator 세팅하기
 
+
+
+
+
+
+
+
+
+
+
+
+
+참고 url
+
+https://codefactory.notion.site/Flutter-Mac-df8222ac8afa4446ab03ae2980ef6591
+
+https://www.notion.so/df8222ac8afa4446ab03ae2980ef6591?pvs=21
+
+https://linktr.ee/codefactory_official
