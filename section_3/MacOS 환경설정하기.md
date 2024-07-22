@@ -147,22 +147,73 @@ xcode 실행 -> 메뉴 window -> devices ans Simulators 클릭
 
 ### Android Studio 설치하기
 
+① 안드로이드 스튜디오 다운받기
+
+하단 페이지에서 다운로드 버튼 클릭하여 다운 받기
+
 https://developer.android.com/studio?hl=ko
 
+![스크린샷 2024-07-22 오후 11 12 19](https://github.com/user-attachments/assets/969fc9ef-b9dd-4b2c-8897-327627c97f1b)
+
+안드로이드 스튜디오 실행 화면
 
 ![스크린샷 2024-07-17 오후 11 51 33](https://github.com/user-attachments/assets/3f962ec8-cb50-468b-805b-d25cce0fb7a5)
+
+<br>
+
+② Plugins -> 마켓플레이스 -> Dart, Flutter 다운 받기
 
 ![스크린샷 2024-07-17 오후 11 51 46](https://github.com/user-attachments/assets/a10f2354-c2c4-47fe-86a7-12222a67ad9e)
 
 ![스크린샷 2024-07-17 오후 11 51 40](https://github.com/user-attachments/assets/083890e7-276d-4249-9bce-a66ad24172a9)
 
-![스크린샷 2024-07-17 오후 11 56 43](https://github.com/user-attachments/assets/6cba1099-a0a2-4972-b894-a0db8eb85b04)
-![스크린샷 2024-07-17 오후 11 56 39](https://github.com/user-attachments/assets/cc751eaf-7cc5-4511-9b6f-fc54236ec11a)
-![스크린샷 2024-07-17 오후 11 54 34](https://github.com/user-attachments/assets/cb6c21cf-2769-4d9a-b47d-3169a8d62c5b)
-![스크린샷 2024-07-17 오후 11 59 08](https://github.com/user-attachments/assets/cff921c3-b999-4fb4-87b5-05b0fd21daae)
+<br>
+
+③ - 1) More Actions -> SDK Manager -> Android SDK Location 경로가 적혀있지 않을 경우 오른쪽 Edit 버튼 클릭
+
+![스샷](https://github.com/user-attachments/assets/089f36ab-845d-46bb-b629-2dd086d16180)
+
+<br>
+
+③ - 2) Android SDK, Android SDK Platform 선택하고 Next 버튼 클릭하여 설치 완료
+
+하면 Android SDK Location에 경로가 생김.
+
 ![스크린샷 2024-07-17 오후 11 53 32](https://github.com/user-attachments/assets/73eb1f02-202c-4574-bf16-6500d0e168b2)
 
-Android Home 환경변수 등록 코드
+![스크린샷 2024-07-17 오후 11 56 39](https://github.com/user-attachments/assets/cc751eaf-7cc5-4511-9b6f-fc54236ec11a)
+
+<br>
+
+④ 안드로이드 API 34 설치
+
+Android API 34 체크 후 Apply 클릭
+
+![스크린샷 2024-07-17 오후 11 59 08](https://github.com/user-attachments/assets/cff921c3-b999-4fb4-87b5-05b0fd21daae)
+
+Confirm Change 다운로드 팝업창이 뜨고, OK 버튼 클릭시 설치 진행.
+
+![스크린샷 2024-07-17 오후 11 54 34](https://github.com/user-attachments/assets/cb6c21cf-2769-4d9a-b47d-3169a8d62c5b)
+
+<br>
+
+⑤ Android SDK -> SDK Tools 하단 목록 체크 후 Apply 버튼 클릭하여 설치
+
+- Android SDK Build-Tools 34
+- NDK
+- Android SDK Command Line Tools 
+- Android Emulator
+- Android SDK Platform-Tools
+
+![스크린샷 2024-07-22 오후 11 31 21](https://github.com/user-attachments/assets/fc47a1ab-5e10-4acc-9be6-4da4ff2068d6)
+
+<br>
+
+➅ 경로 복사 후 Android Home 환경변수 코드 등록
+
+경로 복사 - /Users/1gyou1/Library/Android/sdk
+
+>$ .zhrc
 
 >$ export ANDROID_HOME={경로}
 
