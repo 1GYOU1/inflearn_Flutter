@@ -347,7 +347,10 @@ iPhone 선택하고 재생버튼 클릭
 ![스크린샷 2024-07-23 오전 1 17 57](https://github.com/user-attachments/assets/8c0ce632-1921-439c-9caa-9b246535042d)
 
 ** 하단과 같은 오류 상황이 있었는데, 아이클라우드 동기화 되지 않는 폴더에서 이런 오류가 난다고 함.
+
 실제로 폴더 동기화를 해제하였더니 오류가 사라지고, 정상 작동.
+
+또는 아이클라우드 동기화가 되지 않는 로컬 폴더에 프로젝트를 생성해도 정상 작동.
 
 ![스크린샷 2024-07-23 오전 1 23 07](https://github.com/user-attachments/assets/e5ff3762-1bfe-4371-b8c3-5a010f26c70a)
 
@@ -361,3 +364,5 @@ https://codefactory.notion.site/Flutter-Mac-df8222ac8afa4446ab03ae2980ef6591
 https://www.notion.so/df8222ac8afa4446ab03ae2980ef6591?pvs=21
 
 https://linktr.ee/codefactory_official
+
+https://velog.io/@wakeupmakeup/Flutter-iOS-%EC%95%B1-%EB%B9%8C%EB%93%9C-%EC%98%A4%EB%A5%98codesign%EB%AC%B8%EC%A0%9C
