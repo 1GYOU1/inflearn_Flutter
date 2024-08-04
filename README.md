@@ -12,7 +12,7 @@
 ### 📌 배우는 내용
 - Dart언어 마스터하기
     - [section 0 - Dart 언어 완전정복](https://github.com/1GYOU1/inflearn_Flutter/tree/main/section_0)
-    - [section 2 - 플러터 소개]()
+    - [section 2 - 플러터 소개](https://github.com/1GYOU1/inflearn_Flutter/tree/main/section_2)
     - [section 3 - MacOS 환경설정하기](https://github.com/1GYOU1/inflearn_Flutter/blob/main/section_3/MacOS%20%ED%99%98%EA%B2%BD%EC%84%A4%EC%A0%95%ED%95%98%EA%B8%B0.md)
 - Flutter로 예쁜 UI 제작하기
     - [section 5 - [★☆☆☆☆] Hello World](https://github.com/1GYOU1/inflearn_Flutter/blob/main/section_5/%5B%E2%98%85%E2%98%86%E2%98%86%E2%98%86%E2%98%86%5D%20Hello%20World.md)
