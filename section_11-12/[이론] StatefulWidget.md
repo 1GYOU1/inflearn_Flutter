@@ -20,6 +20,13 @@
 
 **StatelessWidget 색상 변경**
 
+- Flutter 프레임워크가 만들어질 때, 맨 처음 앱이 실행될 때는 빌드가 두 번 연속 실행되도록 만들어졌다. 맨 처음 빌드가 아니면 한 번 실행되는게 정상이다.
+- 빌드 함수는 화면에 보여주고 싶은 요소를 반환하면 된다.
+- HotRestart 앱이 처음부터 다시 실행
+- HotReload 화면에 보이는 모든 위젯들의 빌드 함수만 다시 실행
+- StatefulWidget - setState : setState 함수를 실행하면 빌드 함수가 무조건 재실행된다.
+- 결론 : **StatefulWidget - setState** 사용하여 화면이 변경되어야할 때 HotReload 함수 실행시켜줘야 함.
+
 <br>
 <br>
 
