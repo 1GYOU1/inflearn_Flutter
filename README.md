@@ -6,7 +6,8 @@
 
 ### 📌 주요 기술 스택
 <div style="display:flex;">
-    <img src="https://img.shields.io/badge/Dart-0175C2?style=flat-square&logo=Dart&logoColor=white"/>
+    <img src="https://img.shields.io/badge/Dart-0175C2?style=flat-square&logo=Dart&logoColor=white" style="margin-right:5px;"/>
+    <img src="https://img.shields.io/badge/flutter-02569B?style=flat-square&logo=flutter&logoColor=white"/>
 </div>
 
 ### 📌 배우는 내용
