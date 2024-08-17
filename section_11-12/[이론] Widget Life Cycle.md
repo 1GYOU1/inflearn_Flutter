@@ -98,19 +98,48 @@ class CodeFactoryWidget extends StatelessWidget {
 
 <br>
 
-### StatefulWidget 라이프 사이클 이론 2 - setState 사용
+### StatefulWidget 라이프 사이클 이론 2 - setState()
 
 - 1~7번까지는 상단과 동일한 과정을 거침.
-
-8. 
+- 예시로 컨테이너를 누를 때마다 setState 함수가 실행되도록 설계해둔 상태.
 
 ![Untitled-1](https://github.com/user-attachments/assets/1fe011cf-157c-4f7a-a93f-d7fdf91029bd)
+
+<br>
+
+8. setState() 함수 실행
+    - setState() 함수가 실행되면 dirty - build() - clean 과정을 실행해준다.
+    <br>++) 예시 코드 color 변수 값 변경하는 부분은 dirty 상태가 되기 직전에 반영됨.
 
 ![Untitled-1](https://github.com/user-attachments/assets/23381a06-b48c-4e02-9a42-0a7269b03148)
 
 <br>
 
-### StatefulWidget 라이프 사이클 이론 3
+### StatefulWidget 라이프 사이클 이론 3 - didUpdateWidget()
+
+- state 클래스 안에서 widget이라는 변수를 절대적으로 제공해주는데, statefulWidget과 연동된다.
+- setState의 파라미터로 받아오며, widget.color -> final Color color를 가르킴.
+- setState를 실행하면 build가 재실행되는데, 불변성 때문에 codeFactoryWidget도 다시 build를 해야됨. 근데 creactState는 한 번 불린 이력이 있다면 다시 불리지 않아서 추가된 과정이다.
+
+![Untitled-1](https://github.com/user-attachments/assets/bcc613a0-ffa4-4de0-9e36-3e24095da0f9)
+
+<br>
+
+- 1~7번까지는 상단과 동일한 과정을 거침.
+
+<br>
+
+8. Constructor() 생성자 생성
+9. 기존의 state 클래스를 찾아서 연동
+    - 다음으로 createState를 실행하지 않고, 기존의 state 클래스를 찾아서 연동을 시켜줌.
+    - createState()가 한 번 실행된 이력이 있다면 다시 생성하지 않고, 기존에 생성되어있는 state 클래스를 찾음 
+    - state 클래스에서 사용했던 기존의 상태들을 그대로 유지할 수 있다.
+10. didUpdateWidget() 실행
+    - state와 연동된 widget이 업데이트, 또는 생성 됐다는 뜻
+11. dirty
+12. build
+13. clean
+    - 변경된 사항이 있으니 build를 다시 시켜줘서 반영
 
 ![Untitled-1](https://github.com/user-attachments/assets/f7c8522f-6a82-4c06-b0dd-f247e64684c6)
 
