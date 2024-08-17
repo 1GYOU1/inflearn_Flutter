@@ -8,7 +8,7 @@
 
 <br>
 
-**Widget Immutability**
+### Widget Immutability
 
 - 위젯은 불변(Immutable) 법칙을 따른다.
 - 무언가 변경될 때마다 삭제하고 새로운 위젯을 생성하는 방식이다.
@@ -18,12 +18,10 @@
 
 <br>
 
-**StatelessWidget 색상 변경**
+### StatelessWidget 색상 변경
 
 - Flutter 프레임워크가 만들어질 때, 맨 처음 앱이 실행될 때는 빌드가 두 번 연속 실행되도록 만들어졌다. 맨 처음 빌드가 아니면 한 번 실행되는게 정상이다.
 - 빌드 함수는 화면에 보여주고 싶은 요소를 반환하는 기능이다.
-<!-- - HotRestart - 앱이 처음부터 다시 실행
-- **HotReload** - 화면에 보이는 모든 위젯들의 빌드 함수만 다시 실행 -->
 - StatefulWidget - setState : setState 함수를 실행하면 빌드 함수가 무조건 재실행된다.
 - 결론 : **StatefulWidget - setState** 사용하여 화면이 변경되어야할 때 HotReload 함수 실행시켜줘야 함.
 
@@ -31,6 +29,7 @@
 
 <br>
 
+- HotRestart 또는 HotReload 사용하여 build를 다시하지 않으면 업데이트 된 화면이 보이지 않음.
 - HotRestart - 앱을 처음부터 다시 실행
 - **HotReload** - 화면에 보이는 모든 위젯들의 빌드 함수만 다시 실행
 
@@ -38,7 +37,7 @@
 
 <br>
 
-#### StatelessWidget과 StatefulWidget의 차이
+### StatelessWidget과 StatefulWidget의 차이
 - StatelessWidget은 클래스 하나로 이루어져있고, StatefulWidget은 state라는 클래스를 상속 받아 연동이 된다.
     - StatefulWidget을 상속받은 클래스에서 createState라는 함수를 무조건 정의하게 되어있는데, 여기에서 State 클래스의 인스턴스를 반환해준다.
     - 무조건 암기 ~
