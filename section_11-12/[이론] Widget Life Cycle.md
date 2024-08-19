@@ -148,10 +148,169 @@ class CodeFactoryWidget extends StatelessWidget {
 
 ### StatefulWidget 라이프 사이클 실습 세팅하기
 
+StatelessWidget -> StatefulWidget 쉽게 바꾸기
+- StatelessWidget 마우스 우클릭 -> Show Context Actions -> Convert to StatefulWidget
+
+![스크린샷 2024-08-19 오후 11 13 05](https://github.com/user-attachments/assets/5b4bf646-42d2-44c3-a1f8-e44d9a71f839)
+
+<br>
+
+마우스 클릭시 빨간 네모 박스 보이기/감추기 화면 구현
+
+<img width="808" alt="스크린샷 2024-08-19 오후 11 20 33" src="https://github.com/user-attachments/assets/a5e8e721-1875-4d66-abae-31357e105cad">
+
+```dart
+// lib/screen/home_screen.dart
+
+import 'package:flutter/material.dart';
+
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  bool show = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: SizedBox(
+        width: double.infinity,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            if(show) CodeFactoryWidget(),
+            SizedBox(height: 32.0),
+            ElevatedButton(
+              onPressed: (){
+                setState(() {
+                  show = !show;
+                });
+                print('클릭!');
+            },
+              child: Text('클릭해서 보이기/안보이기'),
+            ),
+          ],
+        )
+      ),
+    );
+  }
+}
+
+class CodeFactoryWidget extends StatelessWidget {
+  const CodeFactoryWidget({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: Colors.red,
+      width: 50.0,
+      height: 50.0,
+    );
+  }
+}
+```
+
 <br>
 <br>
 
 ### StatefulWidget Life Cycle 실습 - 1
+
+```dart
+// // lib/screen/home_screen.dart
+
+import 'package:flutter/material.dart';
+
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  bool show = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: SizedBox(
+        width: double.infinity,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            if(show) CodeFactoryWidget(),
+            SizedBox(height: 32.0),
+            ElevatedButton(
+              onPressed: (){
+                setState(() {
+                  show = !show;
+                });
+                print('클릭!');
+            },
+              child: Text('클릭해서 보이기/안보이기'),
+            ),
+          ],
+        )
+      ),
+    );
+  }
+}
+
+class CodeFactoryWidget extends StatefulWidget {
+  CodeFactoryWidget({super.key}){
+    print('1) Stateful Widget Constructor');
+  }
+
+  @override
+  State<CodeFactoryWidget> createState() {
+    print('2) Stateful Widget Create State');
+    return _CodeFactoryWidgetState();
+  }
+}
+
+class _CodeFactoryWidgetState extends State<CodeFactoryWidget> {
+  @override
+  void initState() {
+    print('3) Stateful Widget initState');
+    super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    print('4) Stateful Widget didChangeDependencies');
+    super.didChangeDependencies();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    print('5) Stateful Widget build');
+    return Container(
+      color: Colors.red,
+      width: 50.0,
+      height: 50.0,
+    );
+  }
+
+  @override
+  void deactivate() {
+    print('6) Stateful Widget didChangeDependencies');
+    super.deactivate();
+  }
+
+  @override
+  void dispose() {
+    print('7) Stateful Widget dispose');
+    super.dispose();
+  }
+}
+```
+
+![스크린샷 2024-08-19 오후 11 40 52](https://github.com/user-attachments/assets/e8c7143b-3037-4aa1-ab61-faee269c73ff)
+
 
 <br>
 <br>

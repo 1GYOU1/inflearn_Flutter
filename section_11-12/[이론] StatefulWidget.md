@@ -65,6 +65,7 @@
 ![스크린샷 2024-08-15 오후 8 53 39](https://github.com/user-attachments/assets/b985491d-9bb9-402b-a44b-70d9846b49b9)
 
 ```dart
+// lib/screen/home_screen.dart
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatefulWidget{
