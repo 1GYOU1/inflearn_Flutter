@@ -315,12 +315,227 @@ class _CodeFactoryWidgetState extends State<CodeFactoryWidget> {
 <br>
 <br>
 
-### StatefulWidget Life Cycle 실습 - 2
+### StatefulWidget Life Cycle 실습 - 2 - setState()
+
+```dart
+// lib/screen/home_screen.dart
+
+import 'package:flutter/material.dart';
+
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  bool show = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: SizedBox(
+        width: double.infinity,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            if(show) CodeFactoryWidget(),
+            SizedBox(height: 32.0),
+            ElevatedButton(
+              onPressed: (){
+                setState(() {
+                  show = !show;
+                });
+                print('클릭!');
+            },
+              child: Text('클릭해서 보이기/안보이기'),
+            ),
+          ],
+        )
+      ),
+    );
+  }
+}
+
+class CodeFactoryWidget extends StatefulWidget {
+  CodeFactoryWidget({super.key}){
+    print('1) Stateful Widget Constructor');
+  }
+
+  @override
+  State<CodeFactoryWidget> createState() {
+    print('2) Stateful Widget Create State');
+    return _CodeFactoryWidgetState();
+  }
+}
+
+class _CodeFactoryWidgetState extends State<CodeFactoryWidget> {
+  Color color = Colors.red;
+
+  @override
+  void initState() {
+    print('3) Stateful Widget initState');
+    super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    print('4) Stateful Widget didChangeDependencies');
+    super.didChangeDependencies();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    print('5) Stateful Widget build');
+    return GestureDetector(
+      onTap: (){
+        setState(() {
+          color = color == Colors.red ? Colors.blue : Colors.red;
+        });
+      },// 제스처를 감지한다.
+      child: Container(
+        color: Colors.red,
+        width: 50.0,
+        height: 50.0,
+      ),
+    );
+  }
+
+  @override
+  void deactivate() {
+    print('6) Stateful Widget didChangeDependencies');
+    super.deactivate();
+  }
+
+  @override
+  void dispose() {
+    print('7) Stateful Widget dispose');
+    super.dispose();
+  }
+}
+```
+
+버튼 클릭, 컨테이너 클릭시 하단 목록 출력
+
+![스크린샷 2024-08-20 오전 12 21 44](https://github.com/user-attachments/assets/a99a79d0-2bf8-4b1a-854f-ed9fc33c59e1)
 
 <br>
 <br>
 
-### StatefulWidget Life Cycle 실습 - 3
+### StatefulWidget Life Cycle 실습 - 3 - widget 사용
+
+- createState 한번만 실행
+
+```dart
+// lib/screen/home_screen.dart
+
+import 'package:flutter/material.dart';
+
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  bool show = false;
+  Color color = Colors.red;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: SizedBox(
+        width: double.infinity,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            if(show) GestureDetector(
+              onTap: (){
+                setState(() {
+                  color = color == Colors.blue ? Colors.red : Colors.blue;
+                });
+              },
+              child: CodeFactoryWidget(
+                color: color,
+              ),
+            ),
+            SizedBox(height: 32.0),
+            ElevatedButton(
+              onPressed: (){
+                setState(() {
+                  show = !show;
+                });
+                print('클릭!');
+            },
+              child: Text('클릭해서 보이기/안보이기'),
+            ),
+          ],
+        )
+      ),
+    );
+  }
+}
+
+class CodeFactoryWidget extends StatefulWidget {
+  final Color color;
+
+  CodeFactoryWidget({
+    super.key,
+    required this.color,
+  }){
+    print('1) Stateful Widget Constructor');
+  }
+
+  @override
+  State<CodeFactoryWidget> createState() {
+    print('2) Stateful Widget Create State');
+    return _CodeFactoryWidgetState();
+  }
+}
+
+class _CodeFactoryWidgetState extends State<CodeFactoryWidget> {
+
+  @override
+  void initState() {
+    print('3) Stateful Widget initState');
+    super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    print('4) Stateful Widget didChangeDependencies');
+    super.didChangeDependencies();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    print('5) Stateful Widget build');
+    return Container(
+      color: widget.color,
+      width: 50.0,
+      height: 50.0,
+    );
+  }
+
+  @override
+  void deactivate() {
+    print('6) Stateful Widget didChangeDependencies');
+    super.deactivate();
+  }
+
+  @override
+  void dispose() {
+    print('7) Stateful Widget dispose');
+    super.dispose();
+  }
+}
+```
+
+버튼 클릭, 컨테이너 클릭시 하단 목록 출력
+
+![스크린샷 2024-08-20 오전 12 32 22](https://github.com/user-attachments/assets/9e0db2e2-1ee0-469c-854a-f82e1870b78b)
 
 <br>
 <br>
