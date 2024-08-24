@@ -132,6 +132,69 @@ flutter:
 
 ### PageView 사용해보기
 
+- 좌우로 슬라이드 할 수 있는 기능 PageView 사용해보기
+
+기본 비율 유지 가운데 정렬인 이미지 슬라이드 형식
+
+```dart
+// lib/screen/home_screen.dart
+
+import 'package:flutter/material.dart';
+
+class HomeScreen extends StatelessWidget {
+  const HomeScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Container(
+        child: PageView(
+          children: [1, 2, 3, 4, 5].map((e) =>
+              Image.asset(
+                  'asset/img/image_$e.jpeg'
+              ),
+          ).toList(),
+        )
+      ),
+    );
+  }
+}
+```
+
+<img width="756" alt="스크린샷 2024-08-24 오후 10 28 02" src="https://github.com/user-attachments/assets/3013bdc0-33b5-464f-a76f-18e34d456e0b">
+
+<br>
+
+기본 비율 유지하면서 전체화면 꽉차게 이미지 슬라이드 만들기
+
+```dart
+// lib/screen/home_screen.dart
+
+import 'package:flutter/material.dart';
+
+class HomeScreen extends StatelessWidget {
+  const HomeScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Container(
+        child: PageView(
+          children: [1, 2, 3, 4, 5].map((e) =>
+              Image.asset(
+                  'asset/img/image_$e.jpeg',
+                fit: BoxFit.cover, // 추가
+              ),
+          ).toList(),
+        )
+      ),
+    );
+  }
+}
+```
+
+<img width="756" alt="스크린샷 2024-08-24 오후 10 29 37" src="https://github.com/user-attachments/assets/d8a6479e-a47b-4c32-a37c-3738152f3d33">
+
 <br>
 <br>
 
