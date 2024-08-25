@@ -199,3 +199,76 @@ class HomeScreen extends StatelessWidget {
 <br>
 
 ### Timer에 Controller 사용하기
+
+- 자동 슬라이드 만들어보기
+- flutter curves - https://api.flutter.dev/flutter/animation/Curves-class.html
+
+```dart
+// lib/screen/home_screen.dart
+
+import 'package:flutter/material.dart';
+import 'dart:async';
+
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  Timer? timer;
+  PageController controller = PageController();
+
+  @override
+  void initState() {
+    super.initState();
+
+    timer = Timer.periodic(
+    Duration(seconds: 2),
+      (timer){
+        int currentPage = controller.page!.toInt();
+        int nextPage = currentPage + 1;
+
+        if(nextPage > 4){
+          nextPage = 0;
+        }
+
+        controller.animateToPage(
+          nextPage,
+          duration: Duration(milliseconds: 500),
+          curve: Curves.linear,
+        );
+      },
+    );
+  }
+
+  @override
+  void dispose() {
+    if(timer != null){
+      timer!.cancel();
+    }
+
+    controller.dispose();
+
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Container(
+        child: PageView(
+          controller: controller,
+          children: [1, 2, 3, 4, 5].map((e) =>
+              Image.asset(
+                  'asset/img/image_$e.jpeg',
+                fit: BoxFit.cover,
+              ),
+          ).toList(),
+        )
+      ),
+    );
+  }
+}
+```
