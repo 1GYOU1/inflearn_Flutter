@@ -7,7 +7,7 @@
 
 ### DateTime 기본 사용법
 
-- positional parameter 사용하여 순서대로 입력 필요.
+- positional parameter 사용하여 순서대로 입력 필요. 년도 필수 입력이고, 나머지는 옵셔널이다.
 
 ![Untitled-1-Recovered](https://github.com/user-attachments/assets/161cbe9b-8022-418a-baa6-8eecfc3fe637)
 
@@ -16,7 +16,8 @@
 ### UTC란?
 
 - Coordinated Universal Time의 약자
-- 나라마다 시간이 다른데, 기준이 되는 시간에서부터 자동으로 현재 위치(프로그램 실행시 런타임에 입력이 되어있는) 시간대로 계산되어 표현됨. 
+- 가장 많이 사용되는 기준.
+- 나라마다 시간이 달라서 **기준이 되는 시간**에서부터 자동으로 현재 위치(프로그램 실행시 런타임에 입력이 되어있는) 시간대로 계산되어 표현된다.
 
 ![Untitled-1-Recovered](https://github.com/user-attachments/assets/4c7ecc26-ed0c-4952-a291-71f087c82b48)
 
@@ -36,6 +37,7 @@
 
 - 기간을 나타냄
 - 특정 부분만 골라 사용할 수 있도록 named parameter 사용
+- 값을 입력하지 않은 부분은 0으로 초기화된다.
 
 ![Untitled-1-Recovered](https://github.com/user-attachments/assets/88cd6035-8ebf-4a2d-ba3b-0dcbc2ca09d6)
 
@@ -43,11 +45,18 @@
 
 ### DateTime.add() / DateTime.subtract()
 
+- DateTime.add() 시간 더하기
+- DateTime.subtract() 시간 빼기
+
 ![Untitled-1-Recovered](https://github.com/user-attachments/assets/5f287acc-9fed-4cf4-9f33-10b412492667)
 
 <br>
 
 ### DateTime.isAfter() / DateTime.isBefore()
+
+- DateTime.isAfter() - 이후 시간인지
+- DateTime.isBefore() - 이전 시간인지
+- isAtSameMomentAs() - 같은 순간인지(년, 월, 일, 시간, 분, 초, 마이크로초, 밀리초 전부 같아야 true)
 
 ![Untitled-1-Recovered](https://github.com/user-attachments/assets/514de0b0-c889-4d06-92b8-1622ed22fa3f)
 
