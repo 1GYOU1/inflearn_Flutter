@@ -136,3 +136,112 @@ class HomeScreen extends StatelessWidget {
 
 ## 디자인 마무리하기
 
+### 1. backgroundColor
+```dart
+backgroundColor: Colors.pink[100],
+```
+- 배경색 500 기본 값, 값이 커질수록 색이 진해지고, 적을수록 색이 연해진다.
+
+<br>
+
+### 2. TextStyle
+
+- pubspec.yaml 파일에 등록했던 fonts의 family 이름 기준으로 fontFamily 사용.
+
+```dart
+Text(
+    '우리 처음 만난 날',
+    style: TextStyle(
+        color: Colors.white, // 글씨 색상
+        fontFamily: 'sunflower', // 폰트 종류
+        fontSize: 30.0, // 폰트 사이즈
+        fontWeight: FontWeight.w700, // 폰트 굵기
+    ),
+),
+```
+
+<br>
+
+```dart
+// u_and_i
+// lib/screen/home_screen.dart
+
+import 'package:flutter/material.dart';
+
+class HomeScreen extends StatelessWidget {
+  const HomeScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.pink[100],
+      body: SafeArea( // 시스템 UI 영역 제외 설정
+        top: true, // 상단 탑 영역 제외
+        bottom: true, // 하단 시스템 터치 영역 제외
+        child: SizedBox(
+          width: MediaQuery.of(context).size.width, // 화면의 너비만큼 넓어지도록 설정, double.infinity랑 결과는 같긴함. 하지만 화면의 절반, 1/3 값을 차지하게 하고싶을 떄는 유용
+          child: Column(
+            children: [
+              Expanded(
+                child: Container(
+                  child: Column(
+                    children: [
+                      Text(
+                          'U&I',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontFamily: 'parisienne',
+                          fontSize: 80.0,
+                        ),
+                      ),
+                      Text(
+                          '우리 처음 만난 날',
+                        style: TextStyle(
+                          color:Colors.white,
+                          fontFamily: 'sunflower',
+                          fontSize: 30.0,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      Text(
+                        '2023.11.23',
+                        style: TextStyle(
+                          color:Colors.white,
+                          fontFamily: 'sunflower',
+                          fontSize: 20.0,
+                        ),
+                      ),
+                      IconButton(
+                        iconSize: 60.0,
+                        color:Colors.red,
+                        onPressed: (){},
+                        icon: Icon(
+                          Icons.favorite,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Expanded(
+                child: Container(
+                  child: Image.asset(
+                    'asset/img/middle_image.png'
+                  ),
+                ),
+              )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+```
+
+<img width="756" alt="스크린샷 2024-08-29 오후 11 31 22" src="https://github.com/user-attachments/assets/5899b53a-3efd-487f-b570-aebef7ff95e4">
+
+<br>
+<br>
+
+## 테마 적용해보기
