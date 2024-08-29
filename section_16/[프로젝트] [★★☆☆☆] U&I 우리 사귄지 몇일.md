@@ -245,3 +245,134 @@ class HomeScreen extends StatelessWidget {
 <br>
 
 ## 테마 적용해보기
+
+- 상, 하단 코드 함수로 따로 빼서 관리하기, _Top 처럼 _언더바를 넣는 이유는, 외부에서 사용할 일 없이 내부에서만 사용할 수 있는 것을 뜻함.
+- 폰트 테마 설정하여 불러오기
+
+```dart
+// U_AND_I
+// lib/main.dart
+import 'package:flutter/material.dart';
+import 'package:u_and_i/screen/home_screen.dart';
+
+void main() {
+  runApp(
+    MaterialApp(
+      theme: ThemeData(
+        fontFamily: 'sunflower', // 기본 폰트
+        textTheme: TextTheme(
+          displayLarge: TextStyle(
+            color: Colors.white,
+            fontSize: 80.0,
+            fontFamily: 'parisienne',
+          ),
+          displayMedium: TextStyle(
+            color: Colors.white,
+            fontSize: 50.0,
+            fontWeight: FontWeight.w700,
+          ),
+          bodyLarge: TextStyle(
+            color: Colors.white,
+            fontSize: 30.0,
+          ),
+          bodyMedium: TextStyle(
+            color: Colors.white,
+            fontSize: 20.0,
+          ),
+        ),
+      ),
+      home:HomeScreen(),
+    ),
+  );
+}
+```
+
+```dart
+// U_AND_I
+// lib/screen/home_screen.dart
+
+import 'package:flutter/material.dart';
+
+class HomeScreen extends StatelessWidget {
+  const HomeScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.pink[100],
+      body: SafeArea(
+        // 시스템 UI 영역 제외 설정
+        top: true, // 상단 탑 영역 제외
+        bottom: true, // 하단 시스템 터치 영역 제외
+        child: SizedBox(
+          width: MediaQuery.of(context)
+              .size
+              .width, // 화면의 너비만큼 넓어지도록 설정, double.infinity랑 결과는 같긴함. 하지만 화면의 절반, 1/3 값을 차지하게 하고싶을 떄는 유용
+          child: Column(
+            children: [
+              _Top(),
+              _Bottom(), // 이미지
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _Top extends StatelessWidget {
+  const _Top({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+
+    final textTheme = Theme.of(context).textTheme;
+
+    return Expanded(
+      child: Container(
+        child: Column(
+          children: [
+            Text(
+              'U&I',
+              style: textTheme.displayLarge,
+            ),
+            Text(
+              '우리 처음 만난 날',
+              style: textTheme.bodyLarge,
+            ),
+            Text(
+              '2023.11.23',
+              style: textTheme.bodyMedium,
+            ),
+            IconButton(
+              iconSize: 60.0,
+              color: Colors.red,
+              onPressed: () {},
+              icon: Icon(
+                Icons.favorite,
+              ),
+            ),
+            Text(
+              'D+1',
+              style: textTheme.displayMedium,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _Bottom extends StatelessWidget {
+  const _Bottom({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: Container(
+        child: Image.asset('asset/img/middle_image.png'),
+      ),
+    );
+  }
+}
+```
