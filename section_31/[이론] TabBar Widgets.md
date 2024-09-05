@@ -231,6 +231,8 @@ class BasicAppBarTabBarScreen extends StatelessWidget {
 }
 ```
 
+<br>
+
 ### Tab Controller 사용하기
 
 - DefaultTabController를 사용하면 controller가 자동으로 주입이 되는데, 이런 방식보다 컨트롤러를 커스텀하는 방식을 많이 사용하기 때문에 컨트롤러 커스텀 하는 방법 알아보기.
@@ -373,3 +375,111 @@ class _AppBarUsingControllerState extends State<AppBarUsingController>
 <img width="756" alt="스크린샷 2024-09-04 오전 12 14 01" src="https://github.com/user-attachments/assets/e8411182-b8d7-48e5-ab08-29c6d55e76c5">
 
 <br>
+
+### BottomNavigationBar
+
+하단 네이게이션 바 만들기
+
+```dart
+// lib/screen/home_screen.dart
+
+import 'package:flutter/material.dart';
+import 'package:tabbar_theory/screen/basic_appbar_tabbar_screen.dart';
+import 'package:tabbar_theory/screen/appbar_using_controller.dart';
+import 'package:tabbar_theory/screen/bottom_navigation_bar.dart';
+
+class HomeScreen extends StatelessWidget {
+  const HomeScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Home Screen'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+          //...생략
+
+            ElevatedButton(
+              // 최하단 바 화면
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => BottomNavigationBarScreen(),
+                  ),
+                );
+              },
+              child: Text('Bottom Navigation Bar'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+```
+
+```dart
+// lib/screen/bottom_navigation_bar.dart
+
+import 'package:flutter/material.dart';
+import 'package:tabbar_theory/const/tabs.dart';
+
+class BottomNavigationBarScreen extends StatefulWidget {
+  const BottomNavigationBarScreen({super.key});
+
+  @override
+  State<BottomNavigationBarScreen> createState() =>
+      _BottomNavigationBarScreenState();
+}
+
+class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen>
+    with TickerProviderStateMixin {
+  late final TabController controller;
+  @override
+  void initState() {
+    super.initState();
+    controller = TabController(length: TABS.length, vsync: this);
+    controller.addListener(() {
+      // 컨트롤러의 상태가 변경될 때마다 상태를 업데이트(인덱스 변경 업데이트)
+      setState(() {});
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Bottom Navigation Bar'),
+      ),
+      body: TabBarView(
+        controller: controller,
+        children: TABS.map((e) => Center(child: Icon(e.icon))).toList(),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        selectedItemColor: Colors.black, // 선택된 아이템 색상
+        unselectedItemColor: Colors.grey, // 선택되지 않은 아이템 색상
+        showSelectedLabels: true, // 선택된 아이템 라벨 표시
+        showUnselectedLabels: true, // 선택되지 않은 아이템 라벨 표시
+        currentIndex: controller.index, // 현재 선택된 아이템 인덱스 - 탭바랑 연동
+        type: BottomNavigationBarType
+            .shifting, // 바텀 네비게이션 바 타입 : shifting(확장) / fixed(고정)
+        onTap: (index) {
+          // 누를때 마다 탭바 인덱스 변경
+          controller.animateTo(index);
+        },
+        items: TABS
+            .map((e) =>
+                BottomNavigationBarItem(icon: Icon(e.icon), label: e.label))
+            .toList(),
+      ),
+    );
+  }
+}
+```
+
+<img width="756" alt="스크린샷 2024-09-05 오후 11 35 59" src="https://github.com/user-attachments/assets/177085e7-a758-4e04-a5c8-20531c13aa07">
