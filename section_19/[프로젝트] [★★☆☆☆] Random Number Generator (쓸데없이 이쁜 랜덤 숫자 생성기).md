@@ -88,31 +88,7 @@ class HomeScreen extends StatelessWidget {
   }
 }
 
-class _Header extends StatelessWidget {
-  const _Header({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          '랜덤숫자 생성기',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 30.0,
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-        IconButton(
-          color: redColor,
-          onPressed: () {},
-          icon: Icon(Icons.settings),
-        ),
-      ],
-    );
-  }
-}
+//...
 
 class _Body extends StatelessWidget {
   const _Body({super.key});
@@ -143,21 +119,7 @@ class _Body extends StatelessWidget {
   }
 }
 
-class _Footer extends StatelessWidget {
-  const _Footer({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return ElevatedButton(
-      onPressed: () {},
-      style: ElevatedButton.styleFrom(
-        backgroundColor: redColor, // 버튼 배경색
-        foregroundColor: Colors.white, // 버튼 글자색
-      ),
-      child: Text('생성하기!'),
-    );
-  }
-}
+//...
 ```
 
 <img width="756" alt="스크린샷 2024-09-11 오전 12 05 05" src="https://github.com/user-attachments/assets/f4380afc-fcf2-4207-912b-2e00aff827f4">
@@ -175,7 +137,7 @@ import 'package:flutter/material.dart';
 import 'package:random_number_generator/constant/color.dart';
 import 'dart:math'; // 난수 생성 기능 제공
 
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends StatefulWidget { // -> StatefulWidget으로 변경
   const HomeScreen({super.key});
 
   @override
@@ -234,32 +196,7 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 }
-
-class _Header extends StatelessWidget {
-  const _Header({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          '랜덤숫자 생성기',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 30.0,
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-        IconButton(
-          color: redColor,
-          onPressed: () {},
-          icon: Icon(Icons.settings),
-        ),
-      ],
-    );
-  }
-}
+//...
 
 class _Body extends StatelessWidget {
   final List<int> numbers;
@@ -287,27 +224,139 @@ class _Body extends StatelessWidget {
     );
   }
 }
-
-class _Footer extends StatelessWidget {
-  final VoidCallback onPressed;
-
-  const _Footer({super.key, required this.onPressed});
-
-  @override
-  Widget build(BuildContext context) {
-    return ElevatedButton(
-      onPressed: onPressed,
-      style: ElevatedButton.styleFrom(
-        backgroundColor: redColor, // 버튼 배경색
-        foregroundColor: Colors.white, // 버튼 글자색
-      ),
-      child: Text('생성하기!'),
-    );
-  }
-}
+//...
 ```
 
 <img width="756" alt="스크린샷 2024-09-11 오전 12 13 39" src="https://github.com/user-attachments/assets/d800c860-1d71-4064-8258-95f7644fbba9">
 
 <br>
 
+**Navigator 사용해서 네비게이션 해보기**
+
+스크린 이동
+```dart
+// lib/screen/home_screen.dart
+
+onSettingIconPressed() {
+	Navigator.of(context).push(
+		// 홈 화면에서 설정 화면으로 이동(스크린 쌓기)
+		MaterialPageRoute(builder: (context) {
+			return SettingScreen();
+		}),
+	);
+}
+```
+
+<br>
+
+뒤로 가기 버튼
+```dart
+// lib/screen/setting_screen.dart
+
+class _Button extends StatelessWidget {
+  const _Button({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: redColor,
+        foregroundColor: Colors.white,
+      ),
+      onPressed: () {
+        Navigator.of(context).pop(); // 뒤로 가기
+      },
+      child: Text('저장'),
+    );
+  }
+}
+```
+
+설정 아이콘 클릭시 setting_screen 화면 노출
+
+<img width="756" alt="스크린샷 2024-09-14 오전 12 22 04" src="https://github.com/user-attachments/assets/b04176bf-3bb9-4406-833a-3b3c8a7d5e2b">
+
+<br>
+
+**공통 컴포넌트 제작하기**
+
+공통으로 사용하는 이미지 생성 map 부분 컴포넌트 파일로 따로 빼서 관리하기
+```dart
+// lib/component/number_to_image.dart
+import 'package:flutter/material.dart';
+
+class NumberToImage extends StatelessWidget {
+  final int number;
+  const NumberToImage({super.key, required this.number});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: number
+				.toString()
+				.split('')
+				.map((number) => Image.asset(
+						'asset/img/$number.png',
+						width: 50.0,
+						height: 70.0,
+					))
+				.toList(),
+    );
+  }
+}
+```
+
+<br>
+
+컴포넌트 사용 예시
+
+```dart
+// lib/screen/home_screen.dart
+
+class _Body extends StatelessWidget {
+  final List<int> numbers;
+
+  const _Body({super.key, required this.numbers});
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: numbers
+            .map((e) => NumberToImage(number: e)) // 숫자 이미지 컴포넌트 사용
+            .toList(),
+      ),
+    );
+  }
+}
+```
+```dart
+// lib/screen/setting_screen.dart
+
+class _Number extends StatelessWidget {
+  final double maxNumber;
+
+  const _Number({super.key, required this.maxNumber});
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: Container(
+        child: Row(
+          children: [
+            NumberToImage(number: maxNumber.toInt()), // 숫자 이미지 컴포넌트 사용
+          ],
+        ),
+      ),
+    );
+  }
+}
+```
+
+<br>
+
+**Slider 위젯 사용해보기**
+
+```dart
+```
