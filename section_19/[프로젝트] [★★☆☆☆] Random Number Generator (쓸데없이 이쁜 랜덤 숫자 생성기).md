@@ -106,13 +106,13 @@ class _Body extends StatelessWidget {
 				.map((e) => e.toString().split(''))
 				.map((e) => Row(
 					children: e
-							.map((number) => Image.asset(
-								'asset/img/$number.png',
-								width: 50.0,
-								height: 70.0,
-							))
-							.toList(),
-						))
+            .map((number) => Image.asset(
+              'asset/img/$number.png',
+              width: 50.0,
+              height: 70.0,
+            ))
+            .toList(),
+          ))
 				.toList(),
       ),
     );
@@ -209,17 +209,17 @@ class _Body extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: numbers
-            .map((e) => e.toString().split(''))
-            .map((e) => Row(
-                  children: e
-                      .map((number) => Image.asset(
-                            'asset/img/$number.png',
-                            width: 50.0,
-                            height: 70.0,
-                          ))
-                      .toList(),
-                ))
+          .map((e) => e.toString().split(''))
+          .map((e) => Row(
+            children: e
+              .map((number) => Image.asset(
+                'asset/img/$number.png',
+                width: 50.0,
+                height: 70.0,
+              ))
             .toList(),
+          ))
+        .toList(),
       ),
     );
   }
@@ -358,5 +358,83 @@ class _Number extends StatelessWidget {
 
 **Slider 위젯 사용해보기**
 
+- 설정해둔 최소, 최대 값에 따라 슬라이더 범위 설정
+- 슬라이더 값 변경시 상태 변경
+- 슬라이더 상태 올려서 중앙화
+
 ```dart
+import 'package:flutter/material.dart';
+import 'package:random_number_generator/constant/color.dart';
+import 'package:random_number_generator/component/number_to_image.dart';
+
+class SettingScreen extends StatefulWidget {
+  const SettingScreen({super.key});
+
+  @override
+  State<SettingScreen> createState() => _SettingScreenState();
+}
+
+class _SettingScreenState extends State<SettingScreen> {
+  double maxNumber = 1000; // 최대 숫자 - 슬라이드에서 던져주는 형태가 double
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: primaryColor,
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              _Number(
+                maxNumber: maxNumber,
+              ),
+              _Slider( // 슬라이더
+                value: maxNumber,
+                onChanged: onSliderChanged,
+              ),
+              _Button(),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  // 슬라이더 값 변경 시 호출되는 함수
+  onSliderChanged(double value) {
+    setState(() {
+      maxNumber = value;
+    });
+  }
+}
+
+//...
+
+// 슬라이더
+class _Slider extends StatelessWidget {
+  final double value;
+  final ValueChanged<double> onChanged;
+
+  const _Slider({super.key, required this.value, required this.onChanged});
+
+  @override
+  Widget build(BuildContext context) {
+    return Slider(
+      value: value,
+      min: 1000,
+      max: 100000,
+      activeColor: redColor, // 슬라이더 색상
+      onChanged: onChanged, // 슬라이더 값 변경 시 호출되는 함수
+    );
+  }
+}
 ```
+
+<br>
+
+**push()와 pop() 함수로 스크린간 아규먼트 주고받기**
+
+**push() 실행한 스크린에 아규먼트 보내주기**
+
