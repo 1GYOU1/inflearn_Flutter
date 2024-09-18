@@ -436,5 +436,157 @@ class _Slider extends StatelessWidget {
 
 **push()와 pop() 함수로 스크린간 아규먼트 주고받기**
 
+- 랜덤 숫자 최대 값 설정 후 저장 버튼 누르면 홈 화면에서 생성 버튼 클릭 시 최대 값 연동 적용되는 기능
+- HomeScreen, SettingScreen의 maxNumber 연동
+
+```dart
+// lib/screen/home_screen.dart
+// ...
+
+class HomeScreen extends StatefulWidget {
+// ...
+
+class _HomeScreenState extends State<HomeScreen> {
+  List<int> numbers = [
+    123,
+    456,
+    789,
+  ];
+  int maxNumber = 1000; // ➀ 최대 숫자 선언
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: primaryColor,
+      body: SafeArea(
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              _Header(
+                onPressed: onSettingIconPressed,
+              ),
+              _Body(
+                numbers: numbers,
+              ),
+              _Footer(
+                onPressed: generateRandomNumber,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  // 설정 아이콘 누르면 호출되는 함수 ➃
+  onSettingIconPressed() async {
+    // async await 사용해서
+    final result = await Navigator.of(context).push(
+      // 홈 화면에서 설정 화면으로 이동(스크린 쌓기)
+      MaterialPageRoute(builder: (context) {
+        return SettingScreen();
+      }),
+    );
+
+    maxNumber = result;
+  }
+
+  // 생성하기 버튼 누르면 호출되는 함수
+  generateRandomNumber() {
+    final rand = Random();
+
+    final Set<int> randomNumbers = {};
+
+    while (randomNumbers.length < 3) {
+      final randomNumber = rand.nextInt(maxNumber); // ➁
+
+      randomNumbers.add(randomNumber);
+    }
+
+    setState(() {
+      numbers = randomNumbers.toList();
+    });
+  }
+}
+
+//...
+```
+
+```dart
+// lib/screen/setting_screen.dart
+
+//...
+
+class SettingScreen extends StatefulWidget {
+//...
+
+class _SettingScreenState extends State<SettingScreen> {
+  double maxNumber = 1000; // 최대 숫자가 HomeScreen의 랜덤숫자 생성 부분과 연동이 되어야함.
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: primaryColor,
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              //...
+
+              _Button(
+                onPressed: onSavePressed, // ➂-4 저장 버튼
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  // 저장 버튼 누르면 호출되는 함수
+  onSavePressed() {
+    Navigator.of(context).pop(
+      maxNumber.toInt(), // ➄
+    ); // 뒤로 가기
+  }
+
+  // 슬라이더 값 변경 시 호출되는 함수
+  onSliderChanged(double value) {
+    setState(() {
+      maxNumber = value;
+    });
+  }
+}
+
+class _Button extends StatelessWidget {
+  final VoidCallback onPressed; // 버튼 동작 외부에서 정의하기 위해 선언 ➂-1
+
+  const _Button({
+    super.key, 
+    required this.onPressed // ➂-2
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: redColor,
+        foregroundColor: Colors.white,
+      ),
+      onPressed: onPressed, // ➂-3
+      child: Text('저장'),
+    );
+  }
+}
+
+//...
+```
+
+<br>
+
 **push() 실행한 스크린에 아규먼트 보내주기**
 
