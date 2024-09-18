@@ -590,3 +590,105 @@ class _Button extends StatelessWidget {
 
 **push() 실행한 스크린에 아규먼트 보내주기**
 
+- 최대 숫자 세팅 후 저장한 화면으로 다시 돌아갔을 때 저장되어있는 기능
+- HomeScreen에서 최대 숫자를 SettingScreen으로 보내기(생성할 때 초기 값을 넘겨주는 방식)
+
+```dart
+// lib/screen/setting_screen.dart
+
+import 'package:flutter/material.dart';
+import 'package:random_number_generator/constant/color.dart';
+import 'package:random_number_generator/component/number_to_image.dart';
+
+class SettingScreen extends StatefulWidget {
+  final int maxNumber; // ➀
+
+  const SettingScreen({super.key, required this.maxNumber}); // ➁
+
+  @override
+  State<SettingScreen> createState() => _SettingScreenState();
+}
+
+class _SettingScreenState extends State<SettingScreen> {
+  double maxNumber = 1000; // 최대 숫자 - 슬라이드에서 던져주는 형태가 double
+
+  // state가 생성되면 무조건 첫 번째 한번만 실행되는 함수
+  initState() { // ➂
+    super.initState();
+    maxNumber = widget.maxNumber.toDouble();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: primaryColor,
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              _Number(
+                maxNumber: maxNumber,
+              ),
+              _Slider(
+                value: maxNumber,
+                onChanged: onSliderChanged,
+              ),
+              _Button(
+                onPressed: onSavePressed,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+//...
+}
+
+//...
+```
+
+```dart
+// lib/screen/home_screen.dart
+//...
+
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  List<int> numbers = [
+    123,
+    456,
+    789,
+  ];
+  int maxNumber = 1000; // ➃
+
+  @override
+  Widget build(BuildContext context) {
+    //...
+  }
+
+  // 설정 아이콘 누르면 호출되는 함수
+  onSettingIconPressed() async {
+    final result = await Navigator.of(context).push(
+      // 홈 화면에서 설정 화면으로 이동(스크린 쌓기)
+      MaterialPageRoute(builder: (context) {
+        return SettingScreen(maxNumber: maxNumber); // ➄
+      }),
+    );
+
+    maxNumber = result;
+  }
+
+//...
+}
+
+//...
+```
