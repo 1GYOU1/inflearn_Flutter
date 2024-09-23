@@ -227,3 +227,103 @@ class RouteTwoScreen extends StatelessWidget {
 ```
 
 ![무제 (3)](https://github.com/user-attachments/assets/f011edc2-b6e2-43a1-b386-8926692309b0)
+
+<br>
+<br>
+
+### Declarative Routing과 Named Routes
+
+- Imperative Routing 명령식 라우팅
+
+```dart
+Navigator.of(context).push(
+  MaterialPageRoute(
+    builder: (context) => RouteOneScreen(), // Imperative Routing 명령식 라우팅
+  ),
+);
+```
+
+- 라우터를 중앙화 시켜서 관리하는 방법
+- pushNamed 사용
+
+```dart
+Navigator.of(context).pushNamed('/three');
+```
+
+```dart
+// lib/main.dart
+
+// Imperative vs Declarative
+void main() {
+  runApp(
+    MaterialApp(
+      initialRoute: '/',
+      routes: {
+        // key - 라우트 이름
+        // value - builder -> 이동하고싶은 라우트
+        '/': (context) => HomeScreen(),
+        '/one': (context) => RouteOneScreen(
+              number: 999,
+            ),
+        '/two': (context) => RouteTwoScreen(),
+        '/three': (context) => RouteThreeScreen(),
+      },
+    ),
+  );
+}
+```
+
+```dart
+// lib/screen/route_two_screen.dart
+
+Widget build(BuildContext context) {
+  final arguments = ModalRoute.of(context)?.settings.arguments;
+
+//...
+  OutlinedButton(
+    onPressed: () {
+      Navigator.of(context).pushNamed( // 라우트 이동
+        '/three', 
+        arguments: 111111,
+      );
+    },
+    child: Text('Push Route Three'),
+  ),
+//...
+```
+
+```dart
+// lib/screen/route_three_screen.dart
+
+class RouteThreeScreen extends StatelessWidget {
+  const RouteThreeScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final arguments = ModalRoute.of(context)?.settings.arguments; // arguments 선언
+
+    return DefaultLayout(
+      title: 'RouteThreeScreen',
+      children: [
+        Text(
+          arguments.toString(), // arguments 출력
+          textAlign: TextAlign.center,
+        ),
+        OutlinedButton(
+          onPressed: () {
+            Navigator.of(context).pop(); // 뒤로가기
+          },
+          child: Text('Pop'),
+        ),
+      ],
+    );
+  }
+}
+```
+
+<br>
+<br>
+
+### pushReplacement() 배워보기
+
+- 
