@@ -326,4 +326,37 @@ class RouteThreeScreen extends StatelessWidget {
 
 ### pushReplacement() 배워보기
 
-- 
+- pushReplacement(), pushReplacementNamed()
+- 현재 위치한 화면의 다음 화면에서 뒤로가기 버튼을 눌렀을때, 현재 위치의 화면이 아닌 이전 화면으로 돌아가게 해준다. 배열에서 잘라내기 기능과 비슷하다.
+- 같은 기능인데, declarative 분야, imperative 분야의 차이이다.
+
+```dart
+// pushReplacement
+OutlinedButton(
+	onPressed: () {
+		// [HomeScreen, RouteOneScreen, RouteTwoScreen, RouteThreeScreen]
+		// push - [HomeScreen, RouteOneScreen, RouteTwoScreen, RouteThreeScreen]
+		// pushReplacement - [HomeScreen, RouteOneScreen, RouteThreeScreen]
+		Navigator.of(context).pushReplacement(
+			MaterialPageRoute(
+				builder: (BuildContext context) {
+					return RouteThreeScreen();
+				},
+				settings: RouteSettings(
+					arguments: '123123',
+				),
+			),
+		);
+	},
+	child: Text('Push Replacement'),
+),
+
+// pushReplacementNamed
+OutlinedButton(
+	onPressed: () {
+	Navigator.of(context)
+		.pushReplacementNamed('/three', arguments: '999');
+	},
+	child: Text('Push Replacement Named'),
+),
+```
