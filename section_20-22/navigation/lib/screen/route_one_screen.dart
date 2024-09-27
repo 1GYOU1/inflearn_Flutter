@@ -12,38 +12,55 @@ class RouteOneScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DefaultLayout(
-      title: 'Route One',
-      children: [
-        Text(
-          'argument: $number',
-          textAlign: TextAlign.center,
-        ),
-        OutlinedButton(
-          onPressed: () {
-            Navigator.of(context).pop(
-              456, // 값 되돌려 보내기
-            );
-          },
-          child: Text('Pop'),
-        ),
-        OutlinedButton(
-          onPressed: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) {
-                  return RouteTwoScreen();
-                },
-                // 다음 화면으로 이동할 때 값 전달
-                settings: RouteSettings(
-                  arguments: 789,
+    return PopScope(
+      canPop: false,
+      child: DefaultLayout(
+        title: 'Route One',
+        children: [
+          Text(
+            'argument: $number',
+            textAlign: TextAlign.center,
+          ),
+          OutlinedButton(
+            onPressed: () {
+              Navigator.of(context).pop(
+                456, // 값 되돌려 보내기
+              );
+            },
+            child: Text('Pop'),
+          ),
+          OutlinedButton(
+            onPressed: () {
+              Navigator.of(context).maybePop(
+                456, // 값 되돌려 보내기
+              );
+            },
+            child: Text('Maybe Pop'),
+          ),
+          OutlinedButton(
+            onPressed: () {
+              print(Navigator.of(context).canPop());
+            },
+            child: Text('Can Pop'),
+          ),
+          OutlinedButton(
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) {
+                    return RouteTwoScreen();
+                  },
+                  // 다음 화면으로 이동할 때 값 전달
+                  settings: RouteSettings(
+                    arguments: 789,
+                  ),
                 ),
-              ),
-            );
-          },
-          child: Text('Push'),
-        ),
-      ],
+              );
+            },
+            child: Text('Push'),
+          ),
+        ],
+      ),
     );
   }
 }
