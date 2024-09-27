@@ -360,3 +360,27 @@ OutlinedButton(
 	child: Text('Push Replacement Named'),
 ),
 ```
+
+### pushNamedAndRemoveUntil()
+
+- route를 push 하면서 동시에 route stack에 현재 있는 라우트들 중에서 어떤 route를 제거할지 조건문으로 정할 수 있다.
+- 하단 소스에서 버튼 클릭시 three 스크린으로 이동하고, pop을 누르면 첫번째 스크린('/')으로 돌아가게 된다.
+
+```dart
+//...
+OutlinedButton(
+  onPressed: () {
+    Navigator.of(context).pushNamedAndRemoveUntil(
+      '/three',
+      (route) {
+        // 만약 삭제할거면 (Route Stack) false로 전환
+        // 만약 삭제를 안할거면 true로 전환
+        return route.settings.name == '/';
+      },
+      arguments: '9999999',
+    );
+  },
+  child: Text('Push Named And Remove Until'),
+),
+//...
+```
