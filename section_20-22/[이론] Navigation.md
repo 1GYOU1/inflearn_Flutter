@@ -361,6 +361,9 @@ OutlinedButton(
 ),
 ```
 
+<br>
+<br>
+
 ### pushNamedAndRemoveUntil()
 
 - route를 push 하면서 동시에 route stack에 현재 있는 라우트들 중에서 어떤 route를 제거할지 조건문으로 정할 수 있다.
@@ -382,5 +385,89 @@ OutlinedButton(
   },
   child: Text('Push Named And Remove Until'),
 ),
+//...
+```
+
+<br>
+<br>
+
+### maybePop()
+
+- 현재 화면에서 뒤로가기 버튼을 눌렀을 때, 현재 화면이 아닌 이전 화면으로 돌아가게 해주는데, 돌아갈 화면이 존재하지 않을 경우를 대비하여 사용한다.
+- 돌아갈 화면이 없을 경우 반응하지 않는다.
+
+```dart
+// pop
+OutlinedButton(
+  onPressed: () {
+    Navigator.of(context).pop(
+      456, // 값 되돌려 보내기
+    );
+  },
+  child: Text('Pop'),
+),
+// maybePop
+OutlinedButton(
+  onPressed: () {
+    Navigator.of(context).maybePop(
+      456, // 값 되돌려 보내기
+    );
+  },
+  child: Text('Maybe Pop'),
+),
+```
+
+<br>
+<br>
+
+### canPop()
+
+- 뒤로가기 기능이 아니라, 뒤로가기를 할 수 있는지 없는지 true, false로 반환해준다.(뒤로가기를 할 수 있는지 없는지 확인용)
+- 맨 처음 화면이면 false 반환, 뒤로가기를 할 수 있는 화면이면 true 반환
+
+```dart
+OutlinedButton(
+  onPressed: () {
+    print(Navigator.of(context).canPop()); // 터미널에 print
+  },
+  child: Text('Can Pop'),
+),
+```
+
+<br>
+<br>
+
+### PopScope 위젯 배워보기
+
+- 아이폰, 안드로이드 기본 기능으로 탑재된 뒤로가기 기능(appBar 뒤로가기 버튼 포함)을 막아주는 통제하는 역할을 해준다.
+- 해당 코드로 감싼 스크린에서는 기본 기능인 뒤로가기 버튼은 사용하지 못하게 된다.
+- PopScope 안에서 canPop을 true, false로 설정할 수 있다.
+  - true : 기본 제공되는 기능인 뒤로가기 버튼 활성화
+  - false : 기본 제공되는 기능인 뒤로가기 버튼 비활성화
+
+```dart
+// lib/screen/home_screen.dart
+
+class HomeScreen extends StatelessWidget {
+  const HomeScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return PopScope( // PopScope 사용
+      canPop: false, // false : 기본 제공되는 기능인 뒤로가기는 비활성화
+      child: DefaultLayout(
+        title: 'Home',
+        children: [
+          OutlinedButton(
+            onPressed: () async {
+              final result = await Navigator.of(context).push<int>(
+                MaterialPageRoute(
+                  builder: (context) => RouteOneScreen(number: 20),
+                ),
+              );
+              print(result);
+            },
+            child: Text('Push'),
+          ),
 //...
 ```
