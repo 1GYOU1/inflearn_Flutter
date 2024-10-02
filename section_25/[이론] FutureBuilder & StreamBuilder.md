@@ -2,22 +2,24 @@
 
 FutureBuilder와 StreamBuilder의 실제 사용 차이
 
-- FutureBuilder: Future를 반환하는 함수 사용
+- 비동기 처리
+- build 함수가 다시 호출되는 과정에서 UI가 자동으로 업데이트 된다.
+- FutureBuilder: Future의 상태가 변경될 때마다 builder 함수를 다시 호출
   - 단일 결과를 기다리는 경우
-- StreamBuilder: Stream을 반환하는 함수 사용
+- StreamBuilder: Stream에서 새 데이터가 발생할 때마다 builder 함수를 다시 호출
   - 지속적인 데이터 흐름을 처리해야 하는 경우
 
 <br>
 
 ### FutureBuilder
 
+강의 요약
 1. Future의 상태를 볼 수 있는 기능 - ConnectionState
 2. 데이터의 존재 유무에 따른 분기처리 하는 법
 3. ConnectionState에 따른 분기처리
 
 <br>
 
-- Future의 상태가 바뀔때마다 다시 빌드 된다.
 - Future의 상태를 볼 수 있는 기능 - ConnectionState
   - ConnectionState.none -> Future 또는 Stream이 입력되지 않은 상태
   - ConnectionState.active -> Stream에서만 존재 / 스트림 아직 실행중
@@ -88,7 +90,7 @@ class _HomeScreenState extends State<HomeScreen> {
     await Future.delayed(Duration(seconds: 3));
     final random = Random();
 
-    throw '에러 발생 !!!!!!!';
+    // throw '에러 발생 !!!!!!!';
 
     return random.nextInt(100);
   }
@@ -99,7 +101,7 @@ class _HomeScreenState extends State<HomeScreen> {
 <br>
 
 ① snapshot.data의 타입 변환
-- FutureBuilder의 제네릭과 AsyncSnapshot의 타입을 맞춰주면 반환해주는 값이 자동으로 타입 변환 된다.(하단 사진 : 원래 dynamic 타입이었지만 int 타입으로 변환)
+- Future 또는 Stream을 반환해주는 타입을 FutureBuilder와 AsyncSnapshot의 타입을 맞춰주면 반환해주는 값의 타입이 자동으로 변환 된다.(하단 사진 : 원래 dynamic 타입이었지만 int 타입으로 변환)
 
 ![스크린샷 2024-10-01 오후 12 57 40](https://github.com/user-attachments/assets/d9f1f68a-56f2-4ad2-a09c-5ae080066dfe)
 
@@ -107,13 +109,22 @@ class _HomeScreenState extends State<HomeScreen> {
 
 <br>
 
-➁ Hotreload를 했을때, 이전 실행했던 데이터를 기억하고 있는 것을 볼 수 있다.(캐싱)
+➁ 코드를 실행하면 랜덤 숫자가 터미널에 출력되는데, Hotreload를 했을때, 이전 실행했던 데이터를 기억하고 있는 것을 볼 수 있다.(캐싱)
 
 ![스크린샷 2024-10-01 오후 3 07 34](https://github.com/user-attachments/assets/ac059f59-0a07-40b1-9dc3-d3b265078f4f)
 
 <br>
 
 ➂ ConnectionState 활용 - ConnectionState.waiting일 때 Indicator 보여주기
+
+```dart
+// 데이터를 기다리는 중인 경우
+if (snapshot.connectionState == ConnectionState.waiting) {
+  return Center(
+    child: CircularProgressIndicator(),
+  );
+}
+```
 
 ![무제 (4)](https://github.com/user-attachments/assets/146f1a49-909e-40d5-90c7-dc01ec80e1fc)
 
@@ -122,6 +133,9 @@ class _HomeScreenState extends State<HomeScreen> {
 <br>
 
 ### StreamBuilder
+
+- 상단 코드에서 FutureBuilder를 StreamBuilder로 변경
+- for문으로 0~9까지 1초마다 1씩 증가하는 데이터를 반환하는 스트림을 생성하는 코드로 수정
 
 ```dart
 // lib/screen/home_screen.dart
@@ -198,8 +212,8 @@ class _HomeScreenState extends State<HomeScreen> {
 }
 ```
 
-- ConnectionState.active -> Stream에서만 존재 / 스트림 아직 실행중
-- 하단 코드는 스트림 아직 실행중일때 인디케이터를 보여주는 코드
+- ConnectionState.active -> Stream에서만 존재 / 스트림 아직 실행중이라는 뜻
+- 하단 코드는 스트림 아직 실행중일때 인디케이터를 가운데 정렬하여 보여주는 코드
 
 ```dart
 if (snapshot.connectionState == ConnectionState.active) {
@@ -215,6 +229,12 @@ if (snapshot.connectionState == ConnectionState.active) {
   );
 }
 ```
+
+<br>
+
+- 실행전(스트림이 생성되고 연결된 직후, 첫 데이터가 도착하기 전에 발생) - waiting
+- 실행중 - active
+- 실행 후 - done
 
 ![스크린샷 2024-10-01 오후 3 50 11](https://github.com/user-attachments/assets/d788c66b-4f4f-446b-857f-28bbabb8e0d8)
 
