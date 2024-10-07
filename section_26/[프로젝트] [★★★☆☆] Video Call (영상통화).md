@@ -161,6 +161,8 @@ void main() {
 ![Untitled-1_03](https://github.com/user-attachments/assets/608c2324-d7e8-4bde-b448-17ffeda54b44)
 
 ```dart
+// home_screen.dart
+
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -561,6 +563,7 @@ class _CamScreenState extends State<CamScreen> {
 
 ```dart
 // cam_screen.dart
+
 import 'package:flutter/material.dart';
 
 class CamScreen extends StatefulWidget {
@@ -645,6 +648,8 @@ body: Stack(
 <br>
 
 ### RTC 엔진 초기화하기
+
+- 이 부분부터는 의문이 드는 점들이 있을 수 있는데, 이유가 있어서 라기보다는 Agora라는 회사가 본인들의 서비스를 사용할 수 있도록 정의를 이렇게 해놓은 것이라는 점을 알아두자 !
 
 <br>
 
