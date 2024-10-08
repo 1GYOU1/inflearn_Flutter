@@ -651,6 +651,105 @@ body: Stack(
 
 - 이 부분부터는 의문이 드는 점들이 있을 수 있는데, 이유가 있어서 라기보다는 Agora라는 회사가 본인들의 서비스를 사용할 수 있도록 정의를 이렇게 해놓은 것이라는 점을 알아두자 !
 
+- Permission 상태:
+  - denied: 거부된 상태. 사용자가 권한을 거부했지만, 앱에서 다시 요청할 수 있음.
+  - granted: 허용된 상태. 권한이 부여됨.
+  - restricted: iOS 전용. 제한된 상태. 부모 통제 등으로 인해 앱이 특정 기능을 사용할 수 없는 상태.
+  - limited: iOS 전용. 제한적 허용 상태. 사진 라이브러리에 대한 제한된 접근 권한을 의미함.
+  - permanently_denied: Android 전용. 영구 거부 상태. 사용자가 "다시 묻지 않음" 옵션을 선택하고 거부한 경우.
+  - provisional: iOS 전용. 임시 허용 상태. 사용자가 임시로 권한을 허용한 상태.
+
+참고:
+- 'denied'와 'permanently_denied'의 차이: 'denied'는 다시 요청 가능하지만, 'permanently_denied'는 설정 앱을 통해서만 변경 가능.
+- 'denied'와 'granted'는 iOS와 Android 모두에서 사용됨.
+- 정확한 상태와 동작은 사용 중인 permission_handler 패키지의 버전에 따라 다를 수 있음.
+
+```dart
+// cam_screen.dart
+
+import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:agora_rtc_engine/agora_rtc_engine.dart';
+import 'package:video_call/const/keys.dart';
+
+class CamScreen extends StatefulWidget {
+  const CamScreen({super.key});
+
+  @override
+  State<CamScreen> createState() => _CamScreenState();
+}
+
+class _CamScreenState extends State<CamScreen> {
+  RtcEngine? engine;
+
+  int uid = 0;
+
+  init() async {
+    final resp = await [Permission.camera, Permission.microphone].request();
+
+    final cameraPermission = resp[Permission.camera];
+    final microphonePermission = resp[Permission.microphone];
+
+    if (cameraPermission != PermissionStatus.granted ||
+        microphonePermission != PermissionStatus.granted) {
+      throw '카메라 또는 마이크 권한이 없습니다.';
+    }
+
+    if (engine == null) {
+      engine = createAgoraRtcEngine();
+
+      await engine!.initialize(
+        RtcEngineContext(
+          appId: appId,
+        ),
+      );
+
+      await engine!.enableVideo();
+      await engine!.startPreview();
+
+      ChannelMediaOptions options = ChannelMediaOptions();
+
+      await engine!.joinChannel(
+        token: token,
+        channelId: channelName,
+        uid: uid,
+        options: options,
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('LIVE'),
+      ),
+      body: Stack(
+        children: [
+          Container(
+            color: Colors.red,
+          ),
+          Container(
+            width: 120,
+            height: 160,
+            color: Colors.blue,
+          ),
+          Positioned(
+            bottom: 16.0,
+            left: 16.0,
+            right: 16.0,
+            child: ElevatedButton(
+              onPressed: () {},
+              child: Text('나가기'),
+            ),
+          )
+        ],
+      ),
+    );
+  }
+}
+```
+
 <br>
 
 ### 나를 찍고있는 카메라 화면 보여주기
