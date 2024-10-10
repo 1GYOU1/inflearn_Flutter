@@ -754,6 +754,57 @@ class _CamScreenState extends State<CamScreen> {
 
 ### 나를 찍고있는 카메라 화면 보여주기
 
+- FutureBuilder 위젯을 사용해서 권한 체크 후 카메라 화면을 보여주기
+- 권한 체크 후 카메라 화면을 보여주기 전에 잠깐의 시간동안 로딩바를 노출시키기 위해서 FutureBuilder 위젯을 사용
+- 권한 체크 실패시 에러 메세지를 노출 코드 작성
+- AgoraVideoView 위젯을 사용해서 나를 찍고있는 카메라 화면을 보여주기
+
+```dart
+// cam_screen.dart
+// ...
+body: FutureBuilder<void>(
+  future: init(),
+  builder: (context, snapshot) {
+    // 권한 체크하는 잠깐의 시간동안 로딩바 노출
+    if (snapshot.connectionState == ConnectionState.waiting) {
+      return Center(
+        child: CircularProgressIndicator(),
+      );
+    }
+
+    // 권한 체크 실패시 에러 메세지 노출
+    if (snapshot.hasError) {
+      return Center(
+        child: Text(snapshot.error.toString()),
+      );
+    }
+
+    return Stack(
+      children: [
+        Container(
+          color: Colors.red,
+        ),
+        Container(
+          width: 120,
+          height: 160,
+          child: AgoraVideoView(
+            controller: VideoViewController(
+              rtcEngine: engine!,
+              canvas: VideoCanvas(uid: uid),
+            ),
+          ),
+        ),
+```
+
+오디오 권한 체크
+<img width="454" alt="스크린샷 2024-10-10 오후 8 09 29" src="https://github.com/user-attachments/assets/ea597968-37a6-4107-abbf-49375da97275">
+
+카메라 권한 체크
+<img width="454" alt="스크린샷 2024-10-10 오후 8 09 25" src="https://github.com/user-attachments/assets/6086a287-75f4-4cc3-aaaf-95f080463c7d">
+
+나를 찍고있는 카메라 화면 보여주기
+<img width="454" alt="스크린샷 2024-10-10 오후 8 20 34" src="https://github.com/user-attachments/assets/df77ea48-22b6-473b-bd9f-033efb591fed">
+
 <br>
 
 ### 상대방 카메라 화면 보여주기
