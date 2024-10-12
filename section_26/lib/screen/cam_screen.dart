@@ -36,14 +36,36 @@ class _CamScreenState extends State<CamScreen> {
         ),
       );
 
+      // 특정 이벤트 발생시 호출되는 함수
       engine!.registerEventHandler(
         RtcEngineEventHandler(
-          // 특정 이벤트 발생시 호출되는 함수 - 상대 유저 채널 참여시
+          // 채널 참여 성공시 연결 정보, 채널 참여 시간 등
+          onJoinChannelSuccess: (RtcConnection connection, int elapsed) {},
+          // 채널 나가기 성공시 연결 정보, 채널 나가기 시간 등
+          onLeaveChannel: (RtcConnection connection, RtcStats stats) {},
+
+          // 상대 유저 채널 참여시
           onUserJoined: (RtcConnection connection, int remoteUid, int elapsed) {
             // remoteUid - 상대 유저의 uid, elapsed - 채널 참여 시간
             print('onUserJoined: $remoteUid');
             setState(() {
               this.remoteUid = remoteUid;
+            });
+          },
+          onUserOffline: (
+            RtcConnection connection, // 채널 정보
+            int remoteUid, // 상대 유저의 uid
+            UserOfflineReasonType reason, // 상대 유저 오프라인 사유
+            /*
+            reason 종류
+            userOfflineQuit - 사용자가 나간 경우(나가기 버튼)
+            userOfflineDropped - 인터넷 끊김 등 통신이 안되는 경우(고의로 나가지 않은 경우)
+            userOfflineBecomeAudience - 호스트가 시청자로 전환된 경우
+            */
+          ) {
+            print('onUserOffline: $remoteUid');
+            setState(() {
+              this.remoteUid = null; // 상대 유저 비디오 뷰 제거
             });
           },
         ),
@@ -109,7 +131,8 @@ class _CamScreenState extends State<CamScreen> {
                   right: 16.0,
                   child: ElevatedButton(
                     onPressed: () {
-                      engine!.leaveChannel();
+                      engine!.leaveChannel(); // 채널 나가기
+                      engine!.release(); // 엔진 해제
                       Navigator.pop(context);
                     },
                     child: Text('나가기'),
