@@ -1,6 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:video_call/screen/cam_screen.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -12,17 +10,15 @@ class HomeScreen extends StatelessWidget {
       backgroundColor: Colors.blue[100],
       body: Column(
         children: [
-          /// 1) 로고
+          // 1) 로고
           Expanded(
             child: _Logo(),
           ),
-
-          /// 2) 이미지
+          // 2) 이미지
           Expanded(
             child: _Image(),
           ),
-
-          /// 3) 버튼
+          // 3) 버튼
           Expanded(
             child: _Footer(),
           ),
@@ -45,8 +41,8 @@ class _Logo extends StatelessWidget {
           boxShadow: [
             BoxShadow(
               color: Colors.blue[300]!,
-              blurRadius: 12.0,
-              spreadRadius: 2.0,
+              blurRadius: 12.0, // 번지는 반경
+              spreadRadius: 2.0, // blurRadius 안에서 번져나오는 정도
             ),
           ],
         ),
@@ -59,7 +55,7 @@ class _Logo extends StatelessWidget {
                 Icons.videocam,
                 color: Colors.white,
               ),
-              SizedBox(width: 12.0),
+              SizedBox(width: 12),
               Text(
                 'LIVE',
                 style: TextStyle(
@@ -81,9 +77,7 @@ class _Image extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Image.asset(
-        'asset/img/home_img.png',
-      ),
+      child: Image.asset('asset/img/home_img.png'),
     );
   }
 }
@@ -98,7 +92,7 @@ class _Footer extends StatelessWidget {
         onPressed: () {
           Navigator.of(context).push(
             MaterialPageRoute(
-              builder: (_) => CamScreen(),
+              builder: (context) => CamScreen(),
             ),
           );
         },
