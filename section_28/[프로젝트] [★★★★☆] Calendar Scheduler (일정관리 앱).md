@@ -115,9 +115,185 @@ class _HomeScreenState extends State<HomeScreen> {
 
 ### 달력 스타일링하기
 
-```dart
+- 캘린더 스타일 변경
+- 스타일 변수로 만들어서 공통으로 사용
+- copyWith: 기존 스타일에 새로운 스타일 추가
+- 선택한 날짜에 borderRadius가 적용되어있다면, 외부 날짜(다른 달) 박스 스타일에도 borderRadius가 적용되어있어야 함. (오류 해결)
 
+```dart
+import 'package:flutter/material.dart';
+import 'package:table_calendar/table_calendar.dart';
+import 'package:calendar_scheduler/const/color.dart';
+
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  DateTime? selectedDay;
+
+  @override
+  Widget build(BuildContext context) {
+    final defaultBoxDecoration = BoxDecoration( // 기본 박스 스타일
+      borderRadius: BorderRadius.circular(6.0),
+      border: Border.all(
+        color: Colors.grey[200]!,
+        width: 1.0,
+      ),
+    );
+
+    final defaultTextStyle = TextStyle( // 기본 텍스트 스타일
+      color: Colors.grey[600]!,
+      fontWeight: FontWeight.w700,
+    );
+
+    return Scaffold(
+      body: SafeArea(
+        child: SafeArea(
+          child: TableCalendar(
+            // locale: 'ko_KR',
+            focusedDay:
+                DateTime(2024, 10, 1),
+            firstDay: DateTime(1800),
+            lastDay: DateTime(3000),
+            headerStyle: HeaderStyle(
+              formatButtonVisible: false,
+              titleCentered: true,
+              titleTextStyle: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            calendarStyle: CalendarStyle(
+              isTodayHighlighted: true, // 오늘 날짜 하이라이트
+              defaultDecoration: defaultBoxDecoration, // 기본 박스 스타일
+              weekendDecoration: defaultBoxDecoration, // 주말 박스 스타일
+              selectedDecoration: defaultBoxDecoration.copyWith( // 선택된 날짜 박스 스타일
+                // copyWith: 기존 스타일에 새로운 스타일 추가
+                border: Border.all(
+                  color: primaryColor,
+                  width: 1.0,
+                ),
+              ),
+              todayDecoration: defaultBoxDecoration.copyWith( // 오늘 날짜 박스 스타일
+                color: primaryColor,
+              ),
+              outsideDecoration: defaultBoxDecoration.copyWith( // 외부 날짜(다른 달) 박스 스타일
+                border: Border.all(
+                  color: Colors.transparent,
+                  width: 1.0,
+                ),
+              ),
+              defaultTextStyle: defaultTextStyle, // 기본 텍스트 스타일
+              weekendTextStyle: defaultTextStyle, // 주말 텍스트 스타일
+              selectedTextStyle: defaultTextStyle.copyWith( // 선택된 날짜 텍스트 스타일
+                color: primaryColor,
+              ),
+            ),
+            onDaySelected: (DateTime selectedDay, DateTime focusedDay) {
+              setState(() {
+                this.selectedDay = selectedDay;
+              });
+            },
+            selectedDayPredicate: (DateTime date) {
+              if (selectedDay == null) {
+                return false;
+              }
+              return date.isAtSameMomentAs(selectedDay ?? DateTime.now());
+            },
+          ),
+        ),
+      ),
+    );
+  }
+}
 ```
 
 <br>
 <br>
+
+### Intl 패키지 사용해서 언어 한국어로 변경하기
+
+- https://pub.dev/packages/intl
+
+```yaml
+// pubspec.yaml
+
+intl: ^0.19.0
+```
+
+<br>
+
+- main.dart 앱 시작시 자동으로 날짜 포맷을 초기화
+
+```dart
+// main.dart
+
+import 'package:flutter/material.dart';
+import 'package:calendar_scheduler/screen/home_screen.dart';
+import 'package:intl/date_symbol_data_local.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await initializeDateFormatting();
+
+  runApp(MaterialApp(
+    home: HomeScreen(),
+  ));
+}
+
+```
+<br>
+
+- locale 추가
+
+```dart
+// home_screen.dart
+
+//...
+return Scaffold(
+      body: SafeArea(
+        child: SafeArea(
+          child: TableCalendar(
+            locale: 'ko_KR', // 캘린더 언어 변경
+            focusedDay:DateTime(2024, 10, 1),
+            firstDay: DateTime(1800),
+            lastDay: DateTime(3000),
+//...
+```
+
+<br>
+<br>
+
+<!-- ### 캘린더 컴포넌트 리팩터링하기
+
+<br>
+<br>
+
+### TodayBanner 작업하기
+
+<br>
+<br>
+
+### ScheduleCard 만들기
+
+<br>
+<br>
+
+### BottomSheet 보여주기
+
+<br>
+<br>
+
+### 시간 텍스트필드 작업하기
+
+<br>
+<br>
+
+### TextFormField의 Expand 프로퍼티 사용해보기
+
+<br>
+<br> -->
