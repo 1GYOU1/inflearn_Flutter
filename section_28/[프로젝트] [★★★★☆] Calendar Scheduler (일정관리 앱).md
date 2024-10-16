@@ -268,16 +268,225 @@ return Scaffold(
 <br>
 <br>
 
-<!-- ### 캘린더 컴포넌트 리팩터링하기
+### 캘린더 컴포넌트 리팩터링하기
+
+- Calendar.dart 파일 생성하여 컴포넌트 분리
+- onDaySelected, selectedDayPredicate 외부로 빼서 관리
+
+```dart
+// calendar.dart
+
+import 'package:flutter/material.dart';
+import 'package:table_calendar/table_calendar.dart';
+import 'package:calendar_scheduler/const/color.dart';
+
+class Calendar extends StatelessWidget {
+  final DateTime focusedDay; // 추가
+  final OnDaySelected onDaySelected; // 추가
+  final bool Function(DateTime day) selectedDayPredicate; // 추가
+
+  const Calendar(
+      {super.key,
+      required this.focusedDay, // 추가
+      required this.onDaySelected, // 추가
+      required this.selectedDayPredicate}); // 추가
+
+  @override
+  Widget build(BuildContext context) {
+    final defaultBoxDecoration = BoxDecoration(
+      borderRadius: BorderRadius.circular(6.0),
+      border: Border.all(
+        color: Colors.grey[200]!,
+        width: 1.0,
+      ),
+    );
+
+    final defaultTextStyle = TextStyle(
+      color: Colors.grey[600]!,
+      fontWeight: FontWeight.w700,
+    );
+
+    return TableCalendar(
+      locale: 'ko_KR',
+      focusedDay: focusedDay, // 수정
+      firstDay: DateTime(1800),
+      lastDay: DateTime(3000),
+      headerStyle: HeaderStyle(
+        //...
+      ),
+      calendarStyle: CalendarStyle(
+       //...그대로 가져오기
+      ),
+      onDaySelected: onDaySelected, // 수정
+      selectedDayPredicate: selectedDayPredicate, // 수정
+    );
+  }
+}
+
+```
+
+```dart
+// home_screen.dart
+
+import 'package:flutter/material.dart';
+import 'package:calendar_scheduler/component/Calendar.dart';
+
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  DateTime? selectedDay;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: SafeArea(
+        child: Column(
+          children: [
+            Calendar(
+              focusedDay: DateTime(2024, 10, 1),
+              onDaySelected: onDaySelected, // 수정
+              selectedDayPredicate: selectedDayPredicate, // 수정
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+  // 클래스로 관리
+  void onDaySelected(DateTime selectedDay, DateTime focusedDay) {
+    setState(() {
+      this.selectedDay = selectedDay;
+    });
+  }
+
+  // 클래스로 관리
+  bool selectedDayPredicate(DateTime date) {
+    if (selectedDay == null) {
+      return false;
+    }
+    return date.isAtSameMomentAs(selectedDay ?? DateTime.now());
+  }
+}
+```
 
 <br>
 <br>
 
 ### TodayBanner 작업하기
 
+- 하단 배너 추가 (선택한 날짜 표기, task 개수 표기)
+- TodayBanner.dart 파일 생성하여 컴포넌트 분리
+
+```dart
+// today_banner.dart
+
+import 'package:flutter/material.dart';
+import 'package:calendar_scheduler/const/color.dart';
+
+class TodayBanner extends StatelessWidget {
+  final DateTime selectedDay;
+  final int taskCount;
+
+  const TodayBanner({
+    super.key,
+    required this.selectedDay,
+    required this.taskCount,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: primaryColor,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: 16.0,
+          vertical: 8.0,
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              '${selectedDay.year}년 ${selectedDay.month}월 ${selectedDay.day}일',
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            Text(
+              '$taskCount개',
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+```
+
+```dart
+import 'package:flutter/material.dart';
+import 'package:calendar_scheduler/component/Calendar.dart';
+import 'package:calendar_scheduler/component/today_banner.dart';
+
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  DateTime selectedDay = DateTime.utc( // 추가
+    DateTime.now().year,
+    DateTime.now().month,
+    DateTime.now().day,
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: SafeArea(
+        child: Column(
+          children: [
+            Calendar(
+              focusedDay: DateTime(2024, 10, 1),
+              onDaySelected: onDaySelected,
+              selectedDayPredicate: selectedDayPredicate,
+            ),
+            TodayBanner( // 추가
+              selectedDay: selectedDay,
+              taskCount: 0,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void onDaySelected(DateTime selectedDay, DateTime focusedDay) {
+    setState(() {
+      this.selectedDay = selectedDay;
+    });
+  }
+
+  bool selectedDayPredicate(DateTime date) { // 수정
+    return date.isAtSameMomentAs(selectedDay);
+  }
+}
+```
 <br>
 <br>
 
+<!-- 
 ### ScheduleCard 만들기
 
 <br>
