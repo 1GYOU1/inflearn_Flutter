@@ -483,20 +483,224 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 ```
+
+<img width="759" alt="스크린샷 2024-10-16 오후 10 32 46" src="https://github.com/user-attachments/assets/57b44991-0cef-4218-8672-e81eecd0dd2f">
+
 <br>
 <br>
 
-<!-- 
 ### ScheduleCard 만들기
+
+- ListView : 리스트 뷰 생성(스크롤 가능)
+- IntrinsicHeight : 자식 위젯의 높이를 기준으로 높이 설정
+- IntrinsHeight 없이 CrossAxisAlignment.stretch 사용하면 기준인 height가 없기 때문에 오류 발생
+
+```dart
+// home_screen.dart
+
+import 'package:calendar_scheduler/component/schedule_card.dart';
+//...
+
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  DateTime selectedDay = DateTime.utc(
+    DateTime.now().year,
+    DateTime.now().month,
+    DateTime.now().day,
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: SafeArea(
+        child: Column(
+          children: [
+            Calendar(
+              //...
+            ),
+            TodayBanner(
+              //...
+            ),
+            Expanded(
+              child: Padding(
+                padding:
+                    const EdgeInsets.only(left: 16.0, right: 16.0, top: 16.0),
+                child: ListView(
+                  children: [
+                    ScheduleCard(
+                      startTime: DateTime(
+                        2024,
+                        10,
+                        1,
+                        11,
+                        0,
+                      ),
+                      endTime: DateTime(
+                        2024,
+                        10,
+                        1,
+                        12,
+                        0,
+                      ),
+                      content: '플러터 공부하기',
+                      color: Colors.blue,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+//...
+}
+```
+
+```dart
+// schedule_card.dart
+
+import 'package:calendar_scheduler/const/color.dart';
+import 'package:flutter/material.dart';
+
+class ScheduleCard extends StatelessWidget {
+  final DateTime startTime;
+  final DateTime endTime;
+  final String content;
+  final Color color;
+
+  const ScheduleCard({
+    super.key,
+    required this.startTime,
+    required this.endTime,
+    required this.content,
+    required this.color,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        border: Border.all(
+          color: primaryColor,
+          width: 1.0,
+        ),
+        borderRadius: BorderRadius.all(
+          Radius.circular(8.0),
+        ),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: IntrinsicHeight(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '${startTime.hour.toString().padLeft(2, '0')}:00',
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      color: primaryColor,
+                      fontSize: 16.0,
+                    ),
+                  ),
+                  Text(
+                    '${endTime.hour.toString().padLeft(2, '0')}:00',
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      color: primaryColor,
+                      fontSize: 10.0,
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(width: 16.0),
+              Expanded(
+                child: Text(content),
+              ),
+              Container(
+                decoration: BoxDecoration(
+                  color: color,
+                  shape: BoxShape.circle,
+                ),
+                width: 16.0,
+                height: 16.0,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+```
+
+<img width="759" alt="스크린샷 2024-10-17 오후 11 40 46" src="https://github.com/user-attachments/assets/8eeaef42-6cf9-4b72-ac6c-e5a6b73dc73a">
 
 <br>
 <br>
 
 ### BottomSheet 보여주기
 
+- 우측 하단 아이콘 버튼(floatingActionButton) 클릭시 올라오는 시트 만들기
+
+```dart
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  DateTime selectedDay = DateTime.utc(
+    //...
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      floatingActionButton: FloatingActionButton( // 추가
+        onPressed: () {
+          showModalBottomSheet(
+            context: context,
+            builder: (_) => Container(
+              color: Colors.white,
+              height: 600,
+              child: Column(
+                children: [
+                  // Text('스케줄 추가'),
+                ],
+              ),
+            ),
+          );
+        },
+        backgroundColor: primaryColor,
+        child: Icon(
+          Icons.add,
+        ),
+      ),
+//...
+```
+
+<img width="759" alt="스크린샷 2024-10-17 오후 11 52 18" src="https://github.com/user-attachments/assets/f7f2cd38-4f59-4187-81d5-f1628bad3337">
+
+<img width="759" alt="스크린샷 2024-10-17 오후 11 52 50" src="https://github.com/user-attachments/assets/5659299a-d2fa-4401-8847-a6265e40834c">
+
 <br>
 <br>
 
+<!-- 
 ### 시간 텍스트필드 작업하기
 
 <br>
