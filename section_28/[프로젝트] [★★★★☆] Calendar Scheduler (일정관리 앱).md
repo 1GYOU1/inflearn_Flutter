@@ -700,11 +700,77 @@ class _HomeScreenState extends State<HomeScreen> {
 <br>
 <br>
 
-<!-- 
 ### 시간 텍스트필드 작업하기
+
+- lib/component/custorm_text_field.dart 추가
+- TextFormField, InputDecoration 스타일
+```dart
+// custom_text_field.dart
+
+import 'package:flutter/material.dart';
+import 'package:calendar_scheduler/const/color.dart';
+
+class CustomTextField extends StatelessWidget {
+  final String label;
+
+  const CustomTextField({
+    super.key,
+    required this.label,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          '레이블',
+          style: TextStyle(
+            color: primaryColor,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        TextFormField( // 텍스트 필드
+          decoration: InputDecoration( // 텍스트 필드 스타일
+            border: InputBorder.none, // 테두리 없애기
+            filled: true, // 배경색 채우기
+            fillColor: Colors.grey[300], // 배경색
+          ),
+          cursorColor: Colors.grey, // 커서 색상
+        ),
+      ],
+    );
+  }
+}
+```
+
+```dart
+// home_screen.dart
+//...
+Row(
+  children: [
+    Expanded(
+      child: CustomTextField(
+        label: '시작 시간',
+      ),
+    ),
+    SizedBox(width: 16.0),
+    Expanded(
+      child: CustomTextField(
+        label: '마감 시간',
+      ),
+    ),
+  ],
+),
+//...
+```
 
 <br>
 <br>
+
+<img width="759" alt="스크린샷 2024-10-20 오후 7 29 53" src="https://github.com/user-attachments/assets/11e7bc6b-f6a3-4230-820b-153c3695b0fe">
+
+<!-- 
 
 ### TextFormField의 Expand 프로퍼티 사용해보기
 
