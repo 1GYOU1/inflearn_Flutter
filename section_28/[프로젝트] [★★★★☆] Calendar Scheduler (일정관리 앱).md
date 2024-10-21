@@ -724,7 +724,7 @@ class CustomTextField extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '레이블',
+          label,
           style: TextStyle(
             color: primaryColor,
             fontWeight: FontWeight.w600,
@@ -765,14 +765,431 @@ Row(
 //...
 ```
 
-<br>
-<br>
+(레이블 텍스트 부분 변수로 변경해줘야 함)
 
 <img width="759" alt="스크린샷 2024-10-20 오후 7 29 53" src="https://github.com/user-attachments/assets/11e7bc6b-f6a3-4230-820b-153c3695b0fe">
 
-<!-- 
+<br>
+<br>
 
 ### TextFormField의 Expand 프로퍼티 사용해보기
 
+- TextFormField를 최대 크기로 확장하여 여러줄 입력으로 바꾸고 싶다면, Expanded 위젯을 사용하여 확장시키고, expands, maxLines, minLines 속성을 사용하여 최대 크기를 설정할 수 있다.
+
+```dart
+// custom_text_field.dart
+import 'package:flutter/material.dart';
+import 'package:calendar_scheduler/const/color.dart';
+
+class CustomTextField extends StatelessWidget {
+  final String label;
+  final bool expand; // 확장 가능 여부
+
+  const CustomTextField({
+    super.key,
+    required this.label,
+    this.expand = false, // 확장 가능 여부
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: TextStyle(
+            color: primaryColor,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        if (!expand) renderTextFormField(), // expand가 false일 때
+        if (expand) // expand가 true일 때 Expanded로 확장
+          Expanded(
+            child: renderTextFormField(),
+          ),
+      ],
+    );
+  }
+
+  Widget renderTextFormField() {
+    return TextFormField(
+      decoration: InputDecoration(
+        border: InputBorder.none,
+        filled: true,
+        fillColor: Colors.grey[300],
+      ),
+      minLines: expand ? null : 1, // 최소 줄 수
+      maxLines: expand ? null : 1, // 최대 줄 수
+      expands: expand, // 확장 가능 여부
+      cursorColor: Colors.grey,
+    );
+  }
+}
+```
+
+```dart
+// home_screen.dart
+//...
+child: Column(
+  children: [
+    Row(
+      children: [
+        Expanded(
+          child: CustomTextField(
+            label: '시작 시간',
+          ),
+        ),
+        SizedBox(width: 16.0),
+        Expanded(
+          child: CustomTextField(
+            label: '마감 시간',
+          ),
+        ),
+      ],
+    ),
+    Expanded(
+      child: CustomTextField(
+        label: '내용',
+        expand: true, // 확장 가능 여부
+      ),
+    ),
+  ],
+),
+//...
+```
+
+<img width="759" alt="스크린샷 2024-10-20 오후 8 28 01" src="https://github.com/user-attachments/assets/dc2cde8f-158e-43fc-972f-3641a4deb084">
+
 <br>
-<br> -->
+<br>
+
+### 카테고리 색상 렌더링하기 ~ BottomSheet 디자인 마무리하기
+
+- 하단 텍스트 필드 SafeArea 위젯으로 감싸서 화면 밑으로 넘어가지 않게 수정.
+```dart
+// home_screen.dart
+//...
+  Widget build(BuildContext context) {
+    return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          showModalBottomSheet(
+            context: context,
+            builder: (_) {
+              return Container(
+                color: Colors.white,
+                height: 400,
+                child: SafeArea( // 추가
+//...
+```
+
+<img width="759" alt="스크린샷 2024-10-20 오후 8 44 01" src="https://github.com/user-attachments/assets/dbd686e9-ade1-4ef5-9bbf-dc9f13bc0f34">
+
+- 하단 텍스트 필드 컴포넌트 분리
+- 카테고리 컬러 클릭시 색상 변경
+- GestureDetector : 사용자의 제스처 입력을 감지하는 위젯
+  - 자식 위젯을 감싸서 해당 위젯 영역에서 발생하는 제스처를 감지
+  - 탭, 더블 탭, 길게 누르기, 드래그, 스와이프 등 여러 종류의 제스처를 감지
+
+<br>
+
+```dart
+// schedule_bottom_sheet.dart
+
+import 'package:flutter/material.dart';
+import 'package:calendar_scheduler/const/color.dart';
+import 'package:calendar_scheduler/component/custorm_text_field.dart';
+
+class ScheduleBottomSheet extends StatefulWidget {
+  const ScheduleBottomSheet({super.key});
+
+  @override
+  State<ScheduleBottomSheet> createState() => _ScheduleBottomSheetState();
+}
+
+class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
+  String selectedColor = categoryColors.first; // 첫번째 색상으로 카테고리 컬러 기본값 설정
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: Colors.white,
+      height: 600,
+      child: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.only(left: 8.0, right: 8.0, top: 16.0),
+          child: Column(
+            children: [
+              _Time(),
+              _Content(),
+              SizedBox(height: 8.0),
+              _Category(
+                selectedColor: selectedColor,
+                onTap: (String color) {
+                  setState(() {
+                    selectedColor = color;
+                  });
+                },
+              ),
+              SizedBox(height: 8.0),
+              _SaveButton(),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _Time extends StatelessWidget {
+  const _Time({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+          child: CustomTextField(
+            label: '시작 시간',
+          ),
+        ),
+        SizedBox(width: 16.0),
+        Expanded(
+          child: CustomTextField(
+            label: '마감 시간',
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _Content extends StatelessWidget {
+  const _Content({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: CustomTextField(
+        label: '내용',
+        expand: true,
+      ),
+    );
+  }
+}
+
+typedef OnColorSelected = void Function(String color); // 카테고리 컬러 선택 시 색상 변경 함수 타입 정의
+
+class _Category extends StatelessWidget {
+  final String selectedColor;
+  final OnColorSelected onTap;
+
+  const _Category({
+    super.key,
+    required this.selectedColor,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: categoryColors
+          .map(
+            (e) => Padding(
+              padding: const EdgeInsets.only(right: 8.0),
+              child: GestureDetector( // 카테고리 컬러 선택 시 색상 변경
+                onTap: () => onTap(e),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Color(
+                      int.parse(
+                        'FF$e',
+                        radix: 16,
+                      ),
+                    ),
+                    border: e == selectedColor
+                        ? Border.all(
+                            color: Colors.black,
+                            width: 4.0,
+                          )
+                        : null,
+                    shape: BoxShape.circle,
+                  ),
+                  width: 32.0,
+                  height: 32.0,
+                ),
+              ),
+            ),
+          )
+          .toList(),
+    );
+  }
+}
+
+class _SaveButton extends StatelessWidget {
+  const _SaveButton({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+          child: ElevatedButton(
+            onPressed: () {},
+            style: ElevatedButton.styleFrom(
+              backgroundColor: primaryColor,
+              foregroundColor: Colors.white,
+            ),
+            child: Text('저장'),
+          ),
+        ),
+      ],
+    );
+  }
+}
+```
+
+<br>
+<br>
+
+### ScheduleModel 생성하기
+
+- 일정 데이터를 저장하는 모델
+
+```dart
+// model/schedule.dart
+
+class Schedule {
+  // 1) 식별 가능한 ID
+  final int id;
+  // 2) 시작 시간
+  final int startTime;
+  // 3) 종료 시간
+  final int endTime;
+  // 4) 일정 내용
+  final String content;
+  // 5) 날짜
+  final DateTime date;
+  // 6) 카테고리
+  final String color;
+  // 7) 일정 생성 날짜 시간
+  final DateTime createdAt;
+
+  Schedule({
+    required this.id,
+    required this.startTime,
+    required this.endTime,
+    required this.content,
+    required this.date,
+    required this.color,
+    required this.createdAt,
+  });
+}
+```
+
+<br>
+<br>
+
+### ScheduleModel 사용해서 ScheduleCard 보여주기
+
+- 저장된 일정 데이터를 map을 사용하여 출력
+
+```dart
+// home_screen.dart
+//...
+
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  DateTime selectedDay = DateTime.utc(
+    DateTime.now().year,
+    DateTime.now().month,
+    DateTime.now().day,
+  );
+
+/*
+  {
+    2023-11-23:[schedule, schedule],
+    2023-11-24:[schedule, schedule]
+  }
+*/
+  Map<DateTime, List<Schedule>> schedules = {
+    DateTime.utc(2024, 10, 1): [
+      Schedule(
+        id: 1,
+        startTime: 11,
+        endTime: 12,
+        content: '플러터 공부하기',
+        date: DateTime.utc(2024, 10, 1),
+        color: categoryColors[0],
+        createdAt: DateTime.now().toUtc(),
+      ),
+      Schedule(
+        id: 1,
+        startTime: 14,
+        endTime: 16,
+        content: 'NestJS 공부하기',
+        date: DateTime.utc(2024, 10, 1),
+        color: categoryColors[3],
+        createdAt: DateTime.now().toUtc(),
+      ),
+    ],
+  };
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        //...
+      ),
+      body: SafeArea(
+        child: Column(
+          children: [
+           //...
+            Expanded(
+              child: Padding(
+                padding:
+                    const EdgeInsets.only(left: 16.0, right: 16.0, top: 16.0),
+                child: ListView(
+                  children: schedules.containsKey(selectedDay) // 선택한 날짜에 스케줄이 있는지 확인
+                      ? schedules[selectedDay]! // 있으면 스케줄 리스트 반환
+                          .map(
+                            (e) => ScheduleCard(
+                              startTime: e.startTime,
+                              endTime: e.endTime,
+                              content: e.content,
+                              color: Color(int.parse(
+                                'FF${e.color}',
+                                radix: 16,
+                              )),
+                            ),
+                          )
+                          .toList()
+                      : [],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+//...
+```
+
+<img width="759" alt="스크린샷 2024-10-20 오후 11 58 17" src="https://github.com/user-attachments/assets/15cf7e6a-03dd-4cb1-80c5-c1765fb09997">
+
+<br>
+<br>
+
+### ListView itemBuilder()와 separated() 생성자 알아보기
+
+```dart
+
+```
