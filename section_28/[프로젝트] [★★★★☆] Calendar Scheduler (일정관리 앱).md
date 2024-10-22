@@ -1188,8 +1188,52 @@ class _HomeScreenState extends State<HomeScreen> {
 <br>
 <br>
 
+
+🧀🍟🍕🍔🍗
+
 ### ListView itemBuilder()와 separated() 생성자 알아보기
 
-```dart
+- ListView.builder() 사용
+  - 많은 양의 데이터를 효율적으로 표시하기 위해 사용되는 생성자, 레이지 로딩
+  - 화면에 보이는 아이템만 렌더링
 
+사용 예시
+```dart
+ListView.builder(
+  itemCount: items.length,
+  itemBuilder: (context, index) {
+    return ListTile(
+      title: Text(items[index]),
+    );
+  },
+)
 ```
+
+<br>
+
+- ListView.separated() 사용
+  - ListView.builder()의 확장된 형태로, 리스트 아이템 사이에 구분자(separator)를 추가할 수 있는 기능
+  - 리스트 아이템 사이에 구분자를 쉽게 추가(SizedBox, Divider 등을 넣어 구분 가능)
+
+사용 예시
+```dart
+ListView.separated(
+  itemCount: items.length,
+  itemBuilder: (context, index) {
+    return ListTile(
+      title: Text(items[index]),
+    );
+  },
+  separatorBuilder: (context, index) {
+    return Divider();
+  },
+)
+```
+
+일정 리스트 사이에 SizedBox 구분자
+
+<img width="759" alt="스크린샷 2024-10-21 오후 11 43 58" src="https://github.com/user-attachments/assets/c98747e4-0dda-47f2-a808-24a48e6ab22a">
+
+<br>
+<br>
+
