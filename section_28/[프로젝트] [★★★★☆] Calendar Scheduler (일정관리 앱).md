@@ -1237,3 +1237,48 @@ ListView.separated(
 <br>
 <br>
 
+### validate() 함수 TextFormField에 적용하기 ~ onSave() 함수 테스트하기
+
+- onSaved 함수 사용하여 시작시간, 마감시간, 내용을 입력했을 때 값들을 반환받아 저장
+- validator 검증 로직 
+  - 시작시간이 마감시간보다 크거나 내용이 비어있을 때 경고 메세지 출력
+- save를 실행하면 form 안에 있는 모든 TextFormField에 onSaved 함수가 실행된다.
+- validate 함수를 실행하면  form 안에 있는 모든 TextFormField에 있는 validator 함수가 실행된다.
+- validate 함수는 boolean 값을 반환하기 때문에 모든 TextFormField의 validator 함수가 실행되고 모두 true 값을 반환해야 저장이 된다. false면 오류가 있었다는 의미이다.
+
+작업 파일
+- lib/component/custorm_text_field.dart
+- lib/component/schedule_bottom_sheet.dart
+
+<br>
+
+validate
+<img width="759" alt="스크린샷 2024-10-22 오후 11 12 25" src="https://github.com/user-attachments/assets/af7f3ce8-e81a-46b9-aed6-e82877850d26">
+
+<br>
+
+onSaved
+
+<img width="757" alt="스크린샷 2024-10-22 오후 11 22 04" src="https://github.com/user-attachments/assets/98c3d4d0-6437-4889-86eb-0b9a283bf5ea">
+
+![스크린샷 2024-10-22 오후 11 21 53](https://github.com/user-attachments/assets/785e31fe-e1bc-4b72-bd3c-2fb8d3218a36)
+
+<br>
+<br>
+
+### 위젯트리 상위로 validate() 함수 올리기 ~ validate() 함수 작업하기
+
+작업 파일
+- lib/component/schedule_bottom_sheet.dart
+
+![스크린샷 2024-10-23 오전 12 10 04](https://github.com/user-attachments/assets/93fcb451-ec9c-405f-bf45-5a70f18b7f9c)
+
+<img width="352" alt="스크린샷 2024-10-23 오전 12 09 51" src="https://github.com/user-attachments/assets/b3a33418-dbb2-4aea-b925-39a39d0bd320">
+
+<img width="333" alt="스크린샷 2024-10-23 오전 12 17 41" src="https://github.com/user-attachments/assets/d81338c0-1fa8-417e-8b01-1bc675eee712">
+
+<br>
+<br>
+
+<!-- ### 일정 메모리에 생성하기 -->
+
