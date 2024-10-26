@@ -1280,5 +1280,702 @@ onSaved
 <br>
 <br>
 
-<!-- ### 일정 메모리에 생성하기 -->
+### 일정 메모리에 생성하기 (여기서 부터 ~ 내용 추가 필요 🐹🧀 ----------------)
 
+- 카테고리 컬러 선택시 상태관리가 되도록 변경
+
+```dart
+// lib/component/schedule_bottom_sheet.dart
+
+//...
+  void onSavePressed() {
+    final isVaild = formKey.currentState!.validate();
+
+    if (isVaild) {
+      formKey.currentState!.save();
+
+      final schedule = Schedule(
+        id: 999,
+        startTime: startTime!,
+        endTime: endTime!,
+        content: content!,
+        color: selectedColor,
+        date: widget.selectedDay,
+        createdAt: DateTime.now().toUtc(),
+      );
+
+      Navigator.of(context).pop(schedule);
+    }
+  }
+}
+//...
+```
+
+- lib/screen/home_screen.dart
+
+방법 1
+```dart
+//...
+setState(() {
+  schedules = {
+    ...schedules,
+    schedule.date: [
+      if (schedules.containsKey(schedule.date))
+        ...schedules[schedule.date]!,
+      schedule,
+    ]
+  };
+});
+```
+
+방법 2
+```dart
+//...
+final dateExists = schedules.containsKey(schedule.date);
+
+final List<Schedule> existingSchedules =
+  dateExists ? schedules[schedule.date]! : [];
+
+  existingSchedules.add(schedule);
+
+setState(() {
+  schedules = {
+    ...schedules,
+    schedule.date: existingSchedules,
+  };
+});
+```
+
+<br>
+<br>
+
+### SQL 기본기
+
+- 매번 load시 일정이 사라지는 문제는 서버에 저장 또는 핸드폰 로컬에 저장하는 방법이 있음. 강의에서는 핸드폰에 저장하는 방법을 사용.
+- RAM은 빠르지만 데이터의 휘발성이 높다.
+- HDD/SSD는 느리지만 장기적으로 데이터를 유지 할 수 있다.
+- SQL을 사용하여 하드드라이브에 장기적으로 저장
+- SQL : Structured Query Language
+  - Select(데이터 선택)
+  - Update(데이터 업데이트)
+  - Delete(데이터 삭제)
+  - Insert(데이터 추가)
+  - Join(데이터 결합)
+  - Many to One Relationship(여러개의 데이터와 하나의 데이터를 연결)
+  - Many to Many Relationship(여러개의 데이터와 여러개의 데이터를 연결)
+
+<br>
+<br>
+
+### Drift 소개
+
+- Drift, sqflite를 동시에 pubspec.yaml에 추가
+  - pub.dev 사이트 - sqflite 2.3.2
+  - https://drift.simonbinder.eu/setup/
+  - 강의 기준으로 버전 사용
+
+- dependencies는 배포시에도 필요, dev_dependencies는 개발시에만 필요
+
+```yaml
+# pubspec.yaml
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+
+  # The following adds the Cupertino Icons font to your application.
+  # Use with the CupertinoIcons class for iOS style icons.
+  cupertino_icons: ^1.0.6
+  table_calendar: ^3.1.0
+  intl: ^0.19.0
+  drift: ^2.16.0 # 추가
+  sqlite3_flutter_libs: ^0.5.0 # 추가
+  path_provider: ^2.0.0 # 추가  
+  path: ^1.9.0 # 추가
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  # The "flutter_lints" package below contains a set of recommended lints to
+  # encourage good coding practices. The lint set provided by the package is
+  # activated in the `analysis_options.yaml` file located at the root of your
+  # package. See that file for information about deactivating specific lint
+  # rules and activating additional ones.
+  flutter_lints: ^3.0.0
+  drift_dev: ^2.16.0 # 추가
+  build_runner: ^2.4.8 # 추가
+```
+<br>
+<br>
+
+### Drift Table 모델 만들기
+
+- Drift에서 요구하는 형태로 코드 변경
+
+```dart
+import 'package:drift/drift.dart';
+
+class Schedule extends Table {
+  // 1) 식별 가능한 ID
+  IntColumn get id => integer().autoIncrement()();
+
+  // 2) 시작 시간
+  IntColumn get startTime => integer()();
+
+  // 3) 종료 시간
+  IntColumn get endTime => integer()();
+
+  // 4) 일정 내용
+  TextColumn get content => text()();
+
+  // 5) 날짜
+  DateTimeColumn get date => dateTime()();
+
+  // 6) 카테고리
+  TextColumn get color => text()();
+
+  // 7) 일정 생성 날짜 시간
+  DateTimeColumn get createdAt => dateTime().clientDefault(
+        () => DateTime.now().toUtc(),
+      )();
+}
+```
+
+<br>
+<br>
+
+### Code Generation 실행하기
+
+- Drift를 사용하면 데이터베이스를 어떤 파일에다 저장해야 될지 데이터베이스를 초기화하겠다는 코드를 작성해줘야함. 프로젝트마다 Drift를 사용할거면 항상 거쳐야하는 작업.
+- 하단과 같이 코드를 작성 후, 다른 파일에서 오류나는 부분 전부 주석처리 후 터미널 명령어 실행하여 dart.g.dart 파일 생성
+
+```dart
+// drift.dart
+import 'dart:io';
+
+import 'package:drift/native.dart';
+import 'package:path/path.dart' as p;
+
+import 'package:calendar_scheduler/model/schedule.dart';
+import 'package:drift/drift.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:sqlite3_flutter_libs/sqlite3_flutter_libs.dart';
+import 'package:sqlite3/sqlite3.dart';
+
+part 'drift.g.dart';
+
+@DriftDatabase(
+  tables: [ScheduleTable],
+)
+class AppDatabase extends _$AppDatabase {
+  AppDatabase() : super(_openConnection());
+
+  @override
+  int get schemaVersion => 1;
+}
+
+LazyDatabase _openConnection() {
+  return LazyDatabase(() async {
+    final dbFolder =
+        await getApplicationDocumentsDirectory(); // docuemnts 디렉토리 가져오기
+
+    // C:\\Users\flutter
+    // /Users/flutter
+    // /Users/flutter + /name/codefactory
+    // /Users/flutter/name/codefactory
+    //
+    // /Users/flutter/name/codefactory/db.sqlite
+    final file = File(p.join(dbFolder.path, 'db.sqlite'));
+
+    if (Platform.isAndroid) {
+      await applyWorkaroundToOpenSqlite3OnOldAndroidVersions(); // 안드로이드 옛날 버전에서 생기는 문제를 해결해주는 코드
+    }
+
+    final cachebase = await getTemporaryDirectory(); // 임시 디렉토리 가져오기
+
+    sqlite3.tempDirectory = cachebase
+        .path; // sqlite가 자동으로 임시 폴더를 사용, 어떤 용도로 사용하는지는 알 수 없음. 아마도 캐시나 메타데이터? 실행을 하면서 생기는 임시 파일을 저장하는 용도일 것임.
+
+    return NativeDatabase.createInBackground(file); // 백그라운드에서 데이터베이스 생성
+  });
+}
+```
+
+<br>
+
+drift.g.dart 파일 생성
+>$ dart run build_runner build
+
+<br>
+<br>
+
+### SQL 메서드 선언하기
+
+- 일정 리스트 가져오기, 일정 추가 코드 작성해보기
+
+```dart
+// lib/drift/drift.dart
+//...
+@DriftDatabase(
+  tables: [ScheduleTable],
+)
+class AppDatabase extends _$AppDatabase {
+  AppDatabase() : super(_openConnection());
+
+  Future<List<ScheduleTableData>> getSchedules() => select(scheduleTable).get(); // 일정 리스트 조회
+
+  Future<int> createSchedule(ScheduleTableCompanion data) =>
+      into(scheduleTable).insert(data); // 일정 추가
+
+  @override
+  int get schemaVersion => 1;
+}
+//...
+```
+
+<br>
+<br>
+
+### Insert & Select 테스트하기
+
+- 하단 코드를 실행시키기 전에 데이터베이스 초기화 코드를 작성해서 실행시켜야 함.
+
+```dart
+// lib/screen/home_screen.dart
+  Future<List<ScheduleTableData>> getSchedules() => select(scheduleTable).get(); // 일정 리스트 조회
+
+  Future<int> createSchedule(ScheduleTableCompanion data) =>
+      into(scheduleTable).insert(data); // 일정 추가
+```
+
+- 초기화 코드 작성
+
+```dart
+// lib/main.dart
+
+import 'package:calendar_scheduler/const/color.dart';
+import 'package:calendar_scheduler/database/drift.dart';
+import 'package:drift/drift.dart';
+import 'package:flutter/material.dart';
+import 'package:calendar_scheduler/screen/home_screen.dart';
+import 'package:intl/date_symbol_data_local.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await initializeDateFormatting();
+
+  final database = AppDatabase();
+
+  await database.createSchedule(ScheduleTableCompanion(
+    startTime: Value(12), // Value로 감싸주기
+    endTime: Value(13),
+    content: Value('Flutter 프로그래밍'),
+    date: Value(DateTime.utc(2024, 10, 27)),
+    color: Value(categoryColors.first),
+  ));
+
+  final resp = await database.getSchedules();
+  print('--------------------------------');
+  print(resp);
+
+  WidgetsFlutterBinding.ensureInitialized();
+  await initializeDateFormatting();
+
+  runApp(MaterialApp(
+    home: HomeScreen(),
+  ));
+}
+```
+
+작성 후 메인 함수를 재실행 시켜주기 위해 앱 다시 실행
+
+![스크린샷 2024-10-27 오전 1 33 21](https://github.com/user-attachments/assets/9ba232b8-84aa-4f93-893e-930a07bca1a2)
+
+<br>
+<br>
+
+### 일정 생성하기
+
+- 의존성 주입, 저장해놓은 값 가져오기
+- 다른 곳에서 사용할 수 있는 특정 변수나 특정 값들을 한 곳에다 선언을 해두고 그 값을 어디에서든 사용할 수 있도록 주입을 해주는 방식
+  - pub.dev 사이트에서 get_it 7.6.7 사용
+  - https://pub.dev/packages/get_it
+
+```yaml
+# pubspec.yaml
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+
+  # The following adds the Cupertino Icons font to your application.
+  # Use with the CupertinoIcons class for iOS style icons.
+  cupertino_icons: ^1.0.6
+  table_calendar: ^3.1.0
+  intl: ^0.19.0
+  drift: ^2.16.0
+  sqlite3_flutter_libs: ^0.5.0
+  path_provider: ^2.0.0
+  path: ^1.9.0
+  get_it: ^7.6.7 # 추가
+```
+
+- 메인 함수 수정
+
+```dart
+// lib/main.dart
+
+//...
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await initializeDateFormatting();
+
+  final database = AppDatabase();
+
+  GetIt.I.registerSingleton<AppDatabase>(database); // 수정 - 의존성 주입
+
+  final resp = await database.getSchedules(); // 수정 - 저장해놓은 값 가져오기
+  print(resp); // 수정 - 입력한 값 출력해보기
+
+  WidgetsFlutterBinding.ensureInitialized();
+  await initializeDateFormatting();
+
+  runApp(MaterialApp(
+    home: HomeScreen(),
+  ));
+}
+
+```
+
+- 일정 추가 코드 수정
+- GetIt을 사용하여 필요한 값 제공받아 가져오기
+- Column 코드 오류가 나는데, package:drift/drift.dart 패키지에서 Column을 가져오는 코드를 숨겨주기 위해 수정
+- 이 상태에서 + 버튼 누르고 일정 추가하면 디버그 콘솔에 입력한 값 출력됨.
+
+```dart
+// lib/component/schedule_bottom_sheet.dart
+import 'package:drift/drift.dart' hide Column;
+
+//...
+  void onSavePressed() async {
+    final isVaild = formKey.currentState!.validate();
+
+    if (isVaild) {
+      formKey.currentState!.save();
+
+      final database = GetIt.I<AppDatabase>();
+
+      await database.createSchedule(ScheduleTableCompanion(
+        startTime: Value(startTime!),
+        endTime: Value(endTime!),
+        content: Value(content!),
+        date: Value(widget.selectedDay),
+        color: Value(selectedColor),
+      ));
+
+      Navigator.of(context).pop();
+    }
+  }
+//...
+```
+
+<img width="345" alt="스크린샷 2024-10-27 오전 1 53 09" src="https://github.com/user-attachments/assets/dd9a275e-5ef0-4c6b-b57f-2ba53f6c80db">
+
+![스크린샷 2024-10-27 오전 1 54 41](https://github.com/user-attachments/assets/8fa22298-ed55-4f9e-928e-f23799ef7e24)
+
+<br>
+<br>
+
+### 일정 불러오기
+
+- FutureBuilder를 사용하여 비동기 작업 처리
+- 데이터가 변경될때마다 다시 빌드, 일정 등록하자마자 빌드되도록 수정
+
+```dart
+// lib/screen/home_screen.dart
+//...
+class _HomeScreenState extends State<HomeScreen> {
+//...
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          final schedule = await showModalBottomSheet<ScheduleTable>(
+            context: context,
+            builder: (_) {
+              return ScheduleBottomSheet(
+                selectedDay: selectedDay,
+              );
+            },
+          );
+
+          setState(() {}); // 수정 - 등록 이후 바로 빌드 다시 하기
+
+         //...
+
+      body: SafeArea(
+        //...
+            Expanded(
+              child: Padding(
+                padding:
+                    const EdgeInsets.only(left: 16.0, right: 16.0, top: 16.0),
+                child: FutureBuilder<List<ScheduleTableData>>( // 여기서부터 수정 - FutureBuilder 사용
+                    future: GetIt.I<AppDatabase>()
+                        .getSchedules(), // Future가 변경될때마다 다시 빌드
+                    builder: (context, snapshot) {
+                      if (snapshot.hasError) {
+                        // 에러가 있을때
+                        return Center(
+                          child: Text(snapshot.error.toString()),
+                        );
+                      }
+
+                      if (!snapshot.hasData &&
+                          snapshot.connectionState == ConnectionState.waiting) {
+                        // 데이터가 없는 상태, 연결 상태 (함수를 처음 실행한 상태)
+                        return Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      }
+
+                      final schedules = snapshot.data!;
+
+                      final selectedSchedules = schedules
+                          .where(
+                            (e) => e.date.isAtSameMomentAs(selectedDay),
+                          )
+                          .toList();
+
+                      return ListView.separated(
+                        itemCount: selectedSchedules.length,
+                        itemBuilder: (BuildContext context, int index) {
+
+                          final schedule = selectedSchedules[index];
+
+                          return ScheduleCard(
+                            startTime: schedule.startTime,
+                            endTime: schedule.endTime,
+                            content: schedule.content,
+                            color: Color(
+                              int.parse(
+                                'FF${schedule.color}',
+                                radix: 16,
+                              ),
+                            ),
+                          );
+                        },
+                        separatorBuilder: (BuildContext context, int index) {
+                          return SizedBox(height: 8.0);
+                        },
+                      );
+                    }),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+//..
+```
+
+<br>
+<br>
+
+### where() 쿼리 사용해서 데이터베이스에서 일정 필터링하기
+
+- 지금까지 작성한 코드는 모든 일정을 불러오는 코드였는데, 필요한 값(특정 날짜에 해당되는 일정)들만 불러오도록 수정(모든 데이터를 불러오도록 하게 하면 안됨)
+
+- drift.dart 파일에서 where() 코드 추가 및 수정해주고, home_screen.dart 파일에서 필터링해주던 코드 삭제 및 매개변수로 날짜 전달해주기
+
+```dart
+// lib/database/drift.dart
+
+//...
+@DriftDatabase(
+  tables: [ScheduleTable],
+)
+class AppDatabase extends _$AppDatabase {
+  AppDatabase() : super(_openConnection());
+
+  Future<List<ScheduleTableData>> getSchedules(
+    DateTime date,
+  ) =>
+      (select(scheduleTable)..where((table) => table.date.equals(date))).get();
+
+  Future<int> createSchedule(ScheduleTableCompanion data) =>
+      into(scheduleTable).insert(data);
+
+  @override
+  int get schemaVersion => 1;
+}
+//...
+```
+
+<br>
+<br>
+
+### Dismissible 위젯 사용해보기
+
+- 일정 리스트 왼쪽으로 스와이프시 삭제 구현하기
+
+```dart
+// lib/screen/home_screen.dart
+//...
+return Dismissible(
+  key: ObjectKey(schedule.id),
+  direction: DismissDirection.endToStart, // 스와이프 방향
+  onDismissed: (direction) {
+    // 스와이프 되었을때 실행되는 함수
+    print(direction);
+  },
+  child: ScheduleCard(
+    startTime: schedule.startTime,
+    endTime: schedule.endTime,
+//...
+```
+<br>
+<br>
+
+### Dismiss 되면 일정 삭제하기
+
+- onDismissed 사용해서 UI에서는 사라지지만 데이터베이스에서는 삭제가 되지 않는 문제로 오류 발생.
+- 바로 다음에 setState() 함수를 사용해서 빌드를 다시 해줘도 같은 문제 발생.
+- async로 삭제처리를 해야할 경우 confirmDismiss 사용 ⭐️✨
+  - return true를 주기 전에 데이터 삭제처리 후 setState() 함수 사용해서 빌드 다시 하기
+
+```dart
+// lib/database/drift.dart
+//...
+Future<int> removeSchedule(int id) =>
+    (delete(scheduleTable)..where((table) => table.id.equals(id))).go();
+```
+
+```dart
+// lib/screen/home_screen.dart
+//...
+return Dismissible(
+  key: ObjectKey(schedule.id),
+  direction: DismissDirection.endToStart, // 스와이프 방향
+  confirmDismiss: (DismissDirection direction) async {
+    await GetIt.I<AppDatabase>().removeSchedule(
+      schedule.id,
+    );
+    setState(() {});
+    return true;
+  },
+//...
+```
+
+<br>
+<br>
+
+### FutureBuilder 대신 StreamBuilder 사용하기
+
+- StreamBuilder 사용해서 setState() 함수 사용하지 않고 자동으로 빌드 실행(setState() 함수 삭제하기)
+- FutureBuilder에서 Dismissible 업데이트 안됐던 문제도 자동으로 해결됨
+- 데이터 불러올때 잠깐 오류 화면 보여주는 문제 해결
+
+```dart
+// lib/database/drift.dart
+//...
+Stream<List<ScheduleTableData>> streamSchedules(DateTime date) =>
+    (select(scheduleTable)..where((table) => table.date.equals(date)))
+        .watch();
+```
+
+```dart
+// lib/screen/home_screen.dart
+//...
+Expanded(
+  child: Padding(
+    padding:
+        const EdgeInsets.only(left: 16.0, right: 16.0, top: 16.0),
+    child: StreamBuilder<List<ScheduleTableData>>(
+        stream: GetIt.I<AppDatabase>()
+            .streamSchedules(selectedDay), // Future가 변경될때마다 다시 빌드
+        builder: (context, snapshot) {
+        //...
+
+          if (snapshot.data == null) {
+            // 데이터가 없는 상태, 연결 상태 (함수를 처음 실행한 상태)
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+//...
+```
+
+<br>
+<br>
+
+### 정렬하기
+
+- 일정 정렬하기(orderBy() 사용)
+
+```dart
+// lib/database/drift.dart
+//...
+Stream<List<ScheduleTableData>> streamSchedules(DateTime date) =>
+    (select(scheduleTable)
+          ..where(
+            (table) => table.date.equals(date),
+          )
+          ..orderBy([
+            (table) => OrderingTerm(
+                  expression: table.startTime,
+                  mode: OrderingMode.asc, // 오름차순, desc 내림차순
+                ),
+            (table) => OrderingTerm( // 중복 정렬일때는 endTime 기준으로 정렬
+              expression: table.endTime,
+              mode: OrderingMode.asc, // 오름차순, desc 내림차순
+            ),
+          ]))
+        .watch();
+//...
+```
+
+<br>
+<br>
+
+### update() 함수 작업하기
+
+- 일정 수정하기(update() 사용)
+
+```dart
+// lib/database/drift.dart
+
+// id 기준으로 데이터 수정(업데이트)
+Future<int> updateScheduleById(int id, ScheduleTableCompanion data) =>
+    (update(scheduleTable)..where((tbl) => tbl.id.equals(id))).write(data);
+    //...
+```
+
+<br>
+<br>
+
+### 기존 일정 업데이트하는 기능 만들기
+
+<br>
+<br>
+
+### 저장하기 버튼에 기존 일정 수정기능 추가하기
+
+<br>
+<br>
+
+### CategoryTable 생성하기
+
+<br>
+<br>
+
+<br>
+<br>
