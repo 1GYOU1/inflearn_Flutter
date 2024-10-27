@@ -1964,18 +1964,159 @@ Future<int> updateScheduleById(int id, ScheduleTableCompanion data) =>
 
 ### 기존 일정 업데이트하는 기능 만들기
 
+- 일정 선택시 id를 받아와서 바텀시트 띄우고, 원래 가진 값 보여주고 수정 후 저장하면 수정된 값 반영되도록
+- id가 null이라면 새로운 일정 추가하는 것으로 처리
+
+수정 파일
+- lib/database/drift.dart
+- lib/screen/schedule_bottom_sheet.dart
+- lib/screen/home_screen.dart
+- lib/screen/custom_text_field.dart
+
+```dart
+// lib/database/drift.dart
+
+// 하나의 데이터를 가져올 때 getSingle
+Future<ScheduleTableD~ata> getScheduleById(int id) =>
+    (select(scheduleTable)..where((table) => table.id.equals(id)))
+        .getSingle();~
+```
+
+```dart
+// lib/screen/schedule_bottom_sheet.dart
+//...
+@override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+        future: widget.id == null
+            ? null
+            : GetIt.I<AppDatabase>().getScheduleById(widget.id!),
+        builder: (context, snapshot) {
+          if (widget.id != null &&
+              snapshot.connectionState == ConnectionState.waiting &&
+              !snapshot.hasData) {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+
+          final data = snapshot.data;
+//...
+```
+
+```dart
+// lib/screen/home_screen.dart
+//...
+
+child: GestureDetector(
+  onTap: () async {
+    await showModalBottomSheet<ScheduleTable>(
+      context: context,
+      builder: (_) {
+        return ScheduleBottomSheet(
+          selectedDay: selectedDay,
+          id: schedule.id,
+        );
+      },
+    );
+  },
+  child: ScheduleCard(
+```
+
 <br>
 <br>
 
 ### 저장하기 버튼에 기존 일정 수정기능 추가하기
+
+- 수정하고 저장시 데이터 반영되도록 코드 작성
+
+```dart
+// lib/screen/schedule_bottom_sheet.dart
+//...
+void onSavePressed() async {
+    final isVaild = formKey.currentState!.validate();
+
+    if (isVaild) {
+      formKey.currentState!.save();
+
+      final database = GetIt.I<AppDatabase>();
+
+      if (widget.id == null) {
+        await database.createSchedule(ScheduleTableCompanion(
+          startTime: Value(startTime!),
+          endTime: Value(endTime!),
+          content: Value(content!),
+          date: Value(widget.selectedDay),
+          color: Value(selectedColor),
+        ));
+      } else {
+        await database.updateScheduleById(
+            widget.id!,
+            ScheduleTableCompanion(
+              startTime: Value(startTime!),
+              endTime: Value(endTime!),
+              content: Value(content!),
+              date: Value(widget.selectedDay),
+              color: Value(selectedColor),
+            ));
+      }
+
+      Navigator.of(context).pop();
+    }
+  }
+}
+```
 
 <br>
 <br>
 
 ### CategoryTable 생성하기
 
-<br>
-<br>
+- Join -> 카테고리 테이블을 따로 만들어서 연결하여 관리하기
 
-<br>
-<br>
+```dart
+// lib/model/schedule.dart
+//...
+  // 6) 카테고리
+  IntColumn get categoryId => integer().references(
+        CategoryTable,
+        #id, // 카테고리 테이블의 id랑 연결
+      )();
+//...
+```
+
+```dart
+// lib/model/category.dart 파일 생성
+
+import 'package:drift/drift.dart';
+
+class CategoryTable extends Table {
+  // 1) 식별 가능한 ID
+  IntColumn get id => integer().autoIncrement()();
+
+  TextColumn get color => text()(); // 색상 정보 저장
+
+  // 7) 일정 생성 날짜 시간
+  DateTimeColumn get createdAt => dateTime().clientDefault(
+        () => DateTime.now().toUtc(),
+      )();
+}
+```
+
+```dart
+// lib/database/drift.dart
+
+//...
+@DriftDatabase(
+  tables: [ScheduleTable, CategoryTable],
+)
+//...
+```
+
+연결 후 명령어 실행
+- 이후 하단 파일에서 에러나는 부분 수정은 다음 챕터에서 진행
+- lib/component/schedule_bottom_sheet.dart
+- lib/screen/home_screen.dart
+- 에러나는 이유 : 카테고리 테이블이 생겼고, color라고 되어있던 부분이 colorId로 변경됨
+
+>$ dart run build_runner build
