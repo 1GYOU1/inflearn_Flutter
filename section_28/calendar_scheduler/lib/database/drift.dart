@@ -11,7 +11,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:sqlite3_flutter_libs/sqlite3_flutter_libs.dart';
 import 'package:sqlite3/sqlite3.dart';
 
-part 'drift.g.dart';
+part '../../../lib/database/drift.g.dart';
 
 @DriftDatabase(
   tables: [ScheduleTable, CategoryTable],
