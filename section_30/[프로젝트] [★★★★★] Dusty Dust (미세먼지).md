@@ -62,6 +62,14 @@ class HomeScreen extends StatelessWidget {
 <br>
 <br>
 
+### MainStat 컴포넌트 제작하기
+
+```dart
+```
+
+<br>
+<br>
+
 ### 에어코리아 API 키 발급받기
 
 공공데이터 포털 사이트 회원가입 후 "에어코리아 미세먼지" 검색
