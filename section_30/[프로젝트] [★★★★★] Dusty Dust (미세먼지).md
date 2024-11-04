@@ -64,8 +64,90 @@ class HomeScreen extends StatelessWidget {
 
 ### MainStat 컴포넌트 제작하기
 
+- main_stat.dart 파일 생성하여 컴포넌트 불러오기
+
 ```dart
+// lib/screen/home_screen.dart
+import 'package:dusty_dust/component/main_stat.dart';
+import 'package:dusty_dust/const/color.dart';
+import 'package:flutter/material.dart';
+
+class HomeScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: primaryColor,
+      body: Column(
+        children: [
+          MainStat(), // 메인 화면 컴포넌트
+        ],
+      ),
+    );
+  }
+}
 ```
+
+<br>
+
+- ts 변수를 생성하여 텍스트 스타일을 공통으로 쓰는 부분을 정리해주기
+- copyWith 메서드를 사용하여 텍스트 스타일 추가하거나 변경하기
+
+```dart
+// dusty_dust/lib/component/main_stat.dart
+import 'package:flutter/material.dart';
+
+class MainStat extends StatelessWidget {
+  const MainStat({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    // 텍스트 스타일 변수 생성
+    final ts = TextStyle(
+      color: Colors.white,
+      fontSize: 40.0,
+    );
+
+    return SafeArea(
+      child: SizedBox(
+        width: double.infinity,
+        child: Column(
+          children: [
+            Text(
+              '서울',
+              style: ts.copyWith(
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            Text('2024-11-1 11:00',
+                style: ts.copyWith(
+                  fontSize: 20.0,
+                )),
+            SizedBox(height: 20.0),
+            Image.asset(
+              'asset/img/good.png',
+              width: MediaQuery.of(context).size.width / 2,
+            ),
+            SizedBox(height: 20.0),
+            Text('보통',
+                style: ts.copyWith(
+                  fontWeight: FontWeight.w700,
+                )),
+            Text('나쁘지 않네요!',
+                style: ts.copyWith(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 20.0,
+                )),
+          ],
+        ),
+      ),
+    );
+  }
+}
+```
+
+<br>
+
+<img width="739" alt="스크린샷 2024-11-04 오전 12 03 35" src="https://github.com/user-attachments/assets/dee683df-ac3d-4957-8623-ff525d555028">
 
 <br>
 <br>

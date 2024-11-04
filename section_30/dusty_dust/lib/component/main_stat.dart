@@ -17,9 +17,14 @@ class MainStat extends StatelessWidget {
           children: [
             Text(
               '서울',
-              style: ts.copyWith(fontWeight: FontWeight.w700),
+              style: ts.copyWith(
+                fontWeight: FontWeight.w700,
+              ),
             ),
-            Text('2024-11-1 11:00', style: ts.copyWith(fontSize: 20.0)),
+            Text('2024-11-1 11:00',
+                style: ts.copyWith(
+                  fontSize: 20.0,
+                )),
             SizedBox(height: 20.0),
             Image.asset(
               'asset/img/good.png',
@@ -27,16 +32,13 @@ class MainStat extends StatelessWidget {
             ),
             SizedBox(height: 20.0),
             Text('보통',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 40.0,
+                style: ts.copyWith(
                   fontWeight: FontWeight.w700,
                 )),
             Text('나쁘지 않네요!',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 20.0,
+                style: ts.copyWith(
                   fontWeight: FontWeight.w700,
+                  fontSize: 20.0,
                 )),
           ],
         ),
