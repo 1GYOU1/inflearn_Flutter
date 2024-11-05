@@ -152,6 +152,173 @@ class MainStat extends StatelessWidget {
 <br>
 <br>
 
+### CategoryStat 컴포넌트 제작하기
+
+- 종류별 통계 레이아웃 작업
+
+- 모서리 둥글기 조절
+  - Card 위젯 : 모서리가 둥글고, 그림자 효과가 있는 위젯
+    - shape : RoundedRectangleBorder 모서리 둥글게 만들기
+      - borderRadius : 모서리 둥글기 정도 조절
+
+  - Container
+    - decoration : BoxDecoration
+      - borderRadius : 모서리 둥글기 정도 조절
+
+- ListView
+  - scrollDirection : Axis.horizontal 가로 스크롤
+
+- LayoutBuilder
+  - 화면 크기에 따른 레이아웃 적용이 필요할때 사용
+  - builder (constraints)
+  - 사용 예시 : constraints.maxWidth
+
+```dart
+import 'package:dusty_dust/component/category_stat.dart';
+import 'package:dusty_dust/component/main_stat.dart';
+import 'package:dusty_dust/const/color.dart';
+import 'package:flutter/material.dart';
+
+class HomeScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: primaryColor,
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            MainStat(),
+            CategoryStat(), // 종류별 통계 컴포넌트
+          ],
+        ),
+      ),
+    );
+  }
+}
+```
+
+```dart
+// dusty_dust/lib/component/category_stat.dart
+import 'package:dusty_dust/const/color.dart';
+import 'package:flutter/material.dart';
+
+class CategoryStat extends StatelessWidget {
+  const CategoryStat({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: double.infinity,
+      height: 160,
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 8.0),
+        child: Card(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16.0),
+          ),
+          child: LayoutBuilder( // 화면 크기에 따른 레이아웃 적용
+            builder: (context, constraints) => Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                    color: darkColor,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(16.0),
+                      topRight: Radius.circular(16.0),
+                    ),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 4.0),
+                    child: Text(
+                      '종류별 통계',
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: lightColor,
+                      borderRadius: BorderRadius.only(
+                        bottomLeft: Radius.circular(16.0),
+                        bottomRight: Radius.circular(16.0),
+                      ),
+                    ),
+                    child: ListView(
+                      physics: PageScrollPhysics(),
+                      scrollDirection: Axis.horizontal,
+                      children: List.generate(
+                        6,
+                        (index) => SizedBox(
+                          width: constraints.maxWidth / 3, // 화면 크기에 따라 레이아웃 적용
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text('미세먼지'),
+                              SizedBox(
+                                height: 8.0,
+                              ),
+                              Image.asset(
+                                'asset/img/bad.png',
+                                width: 50,
+                              ),
+                              SizedBox(height: 8.0),
+                              Text('46.0'),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                )
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+```
+
+- 강사님은 borderRadius를 중복으로 사용했는데, ClipRRect 위젯을 사용해서 한번에 css의 overflow: hidden 효과를 줄 수 있다.
+
+```dart
+//...
+ Expanded(
+  child: ClipRRect(
+    borderRadius: BorderRadius.only(
+      bottomLeft: Radius.circular(16.0),
+      bottomRight: Radius.circular(16.0),
+    ),
+    child: Container(
+      color: lightColor,
+      child: ListView(
+        physics: PageScrollPhysics(),
+        scrollDirection: Axis.horizontal,
+        children: List.generate(
+          6,
+          (index) => SizedBox(
+//...
+```
+
+<img width="739" alt="스크린샷 2024-11-05 오후 11 40 36" src="https://github.com/user-attachments/assets/971665e8-a87b-4b64-955c-01d205300326">
+
+<br>
+<br>
+
+### HourlyStat 컴포넌트 제작하기
+
+- 시간별 통계 레이아웃 작업
+
+```dart
+
+```
+
+<br>
+<br>
+
 ### 에어코리아 API 키 발급받기
 
 공공데이터 포털 사이트 회원가입 후 "에어코리아 미세먼지" 검색
