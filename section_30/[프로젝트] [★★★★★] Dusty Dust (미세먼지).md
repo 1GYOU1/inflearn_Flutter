@@ -313,8 +313,117 @@ class CategoryStat extends StatelessWidget {
 - 시간별 통계 레이아웃 작업
 
 ```dart
+// lib/screen/home_screen.dart
+import 'package:dusty_dust/component/category_stat.dart';
+import 'package:dusty_dust/component/hourly_stat.dart';
+import 'package:dusty_dust/component/main_stat.dart';
+import 'package:dusty_dust/const/color.dart';
+import 'package:flutter/material.dart';
 
+class HomeScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: primaryColor,
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            MainStat(),
+            CategoryStat(),
+            HourlyStat(), // 시간별 통계 컴포넌트
+          ],
+        ),
+      ),
+    );
+  }
+}
 ```
+
+```dart
+// lib/component/hourly_stat.dart
+
+import 'package:dusty_dust/const/color.dart';
+import 'package:flutter/material.dart';
+
+class HourlyStat extends StatelessWidget {
+  const HourlyStat({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: double.infinity,
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 8.0),
+        child: Card(
+          color: lightColor,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(
+              16.0,
+            ),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  color: darkColor,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(16.0),
+                    topRight: Radius.circular(16.0),
+                  ),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 4.0),
+                  child: Text(
+                    '시간별 미세먼지',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w700,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+              ...List.generate(
+                24,
+                (index) => Padding(
+                  padding: EdgeInsets.symmetric(
+                    vertical: 4.0,
+                    horizontal: 16.0,
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          '11시',
+                        ),
+                      ),
+                      Expanded(
+                        child: Image.asset(
+                          'asset/img/best.png',
+                          height: 20.0,
+                        ),
+                      ),
+                      Expanded(
+                        child: Text(
+                          '보통',
+                          textAlign: TextAlign.right,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+```
+
+<img width="739" alt="스크린샷 2024-11-06 오후 10 59 10" src="https://github.com/user-attachments/assets/2112c744-cd83-4037-971a-0235a5c825b0">
 
 <br>
 <br>
@@ -342,4 +451,10 @@ class CategoryStat extends StatelessWidget {
 <br>
 <br>
 
-### 
+### HTTP 이론
+
+![Untitled-1](https://github.com/user-attachments/assets/103dd124-702b-4c64-a523-7c72b1277ffa)
+
+
+<br>
+<br>
