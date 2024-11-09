@@ -455,6 +455,73 @@ class HourlyStat extends StatelessWidget {
 
 ![Untitled-1](https://github.com/user-attachments/assets/103dd124-702b-4c64-a523-7c72b1277ffa)
 
+![Untitled-1](https://github.com/user-attachments/assets/222461eb-e0a3-4383-aaac-c8184a605ef7)
+
+![Untitled-3](https://github.com/user-attachments/assets/a8c377a0-ca5a-4cd7-b709-ba1804911930)
+
+![Untitled-4](https://github.com/user-attachments/assets/d78f15e3-9118-4f45-bd15-4b9295339c76)
+
+![Untitled-5](https://github.com/user-attachments/assets/0fb72c5d-648c-4bc2-b923-24068c0726ab)
+
+![Untitled-6](https://github.com/user-attachments/assets/ddea1d7d-79c2-4789-b524-40db9eb0c466)
+
+![Untitled-7](https://github.com/user-attachments/assets/8ade9ba1-8c5e-47b2-adc2-66548c160c79)
+
+![Untitled-8](https://github.com/user-attachments/assets/e0fdb66b-c671-4ca5-bc27-ecae11c7b3ba)
+
+![Untitled-9](https://github.com/user-attachments/assets/a612b2a9-f42f-47f4-956b-d9adfb96b2c5)
+
+![Untitled-10](https://github.com/user-attachments/assets/d7dd15cd-f888-4e92-8398-bc2e5d335041)
+
+![Untitled-11](https://github.com/user-attachments/assets/0468577c-cc35-4682-9ccf-6767f87aaa24)
 
 <br>
 <br>
+
+### Postman으로 API 테스트하기
+
+- 하단 사이트에서 시도별 실시간 평균정보 조회 선택 후 조회 버튼 클릭
+- https://www.data.go.kr/data/15073855/openapi.do
+- 요청주소, 요청변수 활용하여 Postman에서 테스트 진행
+
+<img width="1512" alt="스크린샷 2024-11-09 오후 10 39 21" src="https://github.com/user-attachments/assets/fd47b9da-58a4-4dab-a63b-25cc3b25ba5b">
+
+![스크린샷 2024-11-09 오후 10 38 19](https://github.com/user-attachments/assets/88ca0ce7-e383-4592-9907-ec47495465cf)
+
+<br>
+<br>
+
+### Dio 사용해서 HTTP 요청 해보기
+
+- pub.dev에서 dio 패키지 설치
+
+<img width="1512" alt="스크린샷 2024-11-09 오후 10 41 38" src="https://github.com/user-attachments/assets/518eb541-dd49-40e1-891f-25bea9c08b4d">
+
+<br>
+
+- pubspec.yaml 파일에 dio 패키지 추가
+
+```yaml
+// pubspec.yaml
+dependencies:
+  flutter:
+    sdk: flutter
+
+
+  # The following adds the Cupertino Icons font to your application.
+  # Use with the CupertinoIcons class for iOS style icons.
+  cupertino_icons: ^1.0.6
+  dio: ^5.4.2+1 // 추가
+```
+
+### StatModel 만들기 ~ JSON 반환값을 StatModel로 변경하기
+
+- json 반환 값을 커스텀하는 작업
+
+작업 파일
+- lib/model/stat_model.dart
+- lib/repository/stat_repository.dart
+- lib/screen/home_screen.dart
+
+<br>
+
