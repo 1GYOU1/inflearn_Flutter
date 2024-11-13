@@ -1,7 +1,22 @@
-import 'package:flutter/material.dart';
+// import 'package:dusty_dust/const/status_level.dart';
+import 'package:dusty_dust/model/stat_model.dart';
+import 'package:dusty_dust/utils/date_utils.dart';
+import 'package:dusty_dust/utils/status_utils.dart';
+import 'package:flutter/material.dart' hide DateUtils;
+import 'package:get_it/get_it.dart';
+import 'package:isar/isar.dart';
 
 class MainStat extends StatelessWidget {
-  const MainStat({super.key});
+  final Color primaryColor;
+  final Region region;
+  final bool isExpanded;
+
+  const MainStat({
+    super.key,
+    required this.region,
+    required this.primaryColor,
+    required this.isExpanded,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -10,37 +25,76 @@ class MainStat extends StatelessWidget {
       fontSize: 40.0,
     );
 
-    return SafeArea(
-      child: SizedBox(
-        width: double.infinity,
-        child: Column(
-          children: [
-            Text(
-              '서울',
-              style: ts.copyWith(
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-            Text('2024-11-1 11:00',
-                style: ts.copyWith(
-                  fontSize: 20.0,
-                )),
-            SizedBox(height: 20.0),
-            Image.asset(
-              'asset/img/good.png',
-              width: MediaQuery.of(context).size.width / 2,
-            ),
-            SizedBox(height: 20.0),
-            Text('보통',
-                style: ts.copyWith(
-                  fontWeight: FontWeight.w700,
-                )),
-            Text('나쁘지 않네요!',
-                style: ts.copyWith(
-                  fontWeight: FontWeight.w700,
-                  fontSize: 20.0,
-                )),
-          ],
+    return SliverAppBar(
+      backgroundColor: primaryColor,
+      expandedHeight: 500.0,
+      pinned: true,
+      title: isExpanded ? null : Text('${region.krName}'),
+      flexibleSpace: FlexibleSpaceBar(
+        background: SafeArea(
+          child: SizedBox(
+            width: double.infinity,
+            child: FutureBuilder<StatModel?>(
+                future: GetIt.I<Isar>()
+                    .statModels
+                    .filter()
+                    .regionEqualTo(region)
+                    .itemCodeEqualTo(ItemCode.PM10)
+                    .sortByDateTimeDesc() // 가장 최신 데이터를 가져오기 위해 내림차순 정렬
+                    .findFirst(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+
+                  if (!snapshot.hasData) {
+                    return Center(
+                      child: Text('데이터가 없습니다.'),
+                    );
+                  }
+
+                  final statModel = snapshot.data!;
+
+                  final status = StatusUtils.getStatusModelFromStat(
+                    statModel: statModel,
+                  );
+
+                  return Column(
+                    children: [
+                      SizedBox(height: kToolbarHeight),
+                      Text(
+                        region.krName,
+                        style: ts.copyWith(
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      Text(
+                          DateUtils.DateTimeToString(
+                              dateTime: statModel.dateTime),
+                          style: ts.copyWith(
+                            fontSize: 20.0,
+                          )),
+                      SizedBox(height: 20.0),
+                      Image.asset(
+                        status.imagePath,
+                        width: MediaQuery.of(context).size.width / 2,
+                      ),
+                      SizedBox(height: 20.0),
+                      Text(status.label,
+                          style: ts.copyWith(
+                            fontWeight: FontWeight.w700,
+                          )),
+                      Text(status.comment,
+                          style: ts.copyWith(
+                            fontWeight: FontWeight.w700,
+                            fontSize: 20.0,
+                          )),
+                    ],
+                  );
+                }),
+          ),
         ),
       ),
     );

@@ -1,8 +1,20 @@
-import 'package:dusty_dust/const/color.dart';
+import 'package:dusty_dust/model/stat_model.dart';
+import 'package:dusty_dust/utils/status_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+import 'package:isar/isar.dart';
 
 class CategoryStat extends StatelessWidget {
-  const CategoryStat({super.key});
+  final Color darkColor;
+  final Color lightColor;
+  final Region region;
+
+  const CategoryStat({
+    super.key,
+    required this.region,
+    required this.darkColor,
+    required this.lightColor,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -51,27 +63,55 @@ class CategoryStat extends StatelessWidget {
                     child: ListView(
                       physics: PageScrollPhysics(),
                       scrollDirection: Axis.horizontal,
-                      children: List.generate(
-                        6,
-                        (index) => SizedBox(
-                          width: constraints.maxWidth / 3,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text('미세먼지'),
-                              SizedBox(
-                                height: 8.0,
-                              ),
-                              Image.asset(
-                                'asset/img/bad.png',
-                                width: 50,
-                              ),
-                              SizedBox(height: 8.0),
-                              Text('46.0'),
-                            ],
-                          ),
-                        ),
-                      ),
+                      children: ItemCode.values
+                          .map(
+                            (itemCode) => FutureBuilder(
+                                future: GetIt.I<Isar>()
+                                    .statModels
+                                    .filter()
+                                    .regionEqualTo(region)
+                                    .itemCodeEqualTo(itemCode)
+                                    .sortByDateTimeDesc() // 가장 최신 데이터를 가져오기 위해 내림차순 정렬
+                                    .findFirst(),
+                                builder: (context, snapshot) {
+                                  if (snapshot.hasError) {
+                                    return Center(
+                                      child: Text(snapshot.error.toString()),
+                                    );
+                                  }
+
+                                  if (!snapshot.hasData) {
+                                    return Container();
+                                  }
+
+                                  final statModel = snapshot.data!;
+                                  final statusModel =
+                                      StatusUtils.getStatusModelFromStat(
+                                    statModel: statModel,
+                                  );
+
+                                  return SizedBox(
+                                    width: constraints.maxWidth / 3,
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Text(itemCode.krName),
+                                        SizedBox(
+                                          height: 8.0,
+                                        ),
+                                        Image.asset(
+                                          statusModel.imagePath,
+                                          width: 50,
+                                        ),
+                                        SizedBox(height: 8.0),
+                                        Text(statModel.stat.toString()),
+                                      ],
+                                    ),
+                                  );
+                                }),
+                          )
+                          .toList(),
                     ),
                   ),
                 )
