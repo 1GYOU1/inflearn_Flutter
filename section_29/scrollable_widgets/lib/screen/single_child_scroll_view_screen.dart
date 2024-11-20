@@ -3,19 +3,20 @@ import 'package:scrollable_widgets/const/colors.dart';
 import 'package:scrollable_widgets/layout/main_layout.dart';
 
 class SingleChildScrollViewScreen extends StatelessWidget {
-  const SingleChildScrollViewScreen({super.key});
+  final List<int> numbers = List.generate(
+    100,
+    (index) => index,
+  );
+
+  SingleChildScrollViewScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    print(numbers);
+
     return MainLayout(
       title: "SingleChildScrollView",
-      body: SingleChildScrollView(
-        physics: NeverScrollableScrollPhysics(),
-        child: Column(
-          children:
-              rainbowColors.map((e) => renderContainer(color: e)).toList(),
-        ),
-      ),
+      body: renderPerformance(),
     );
   }
 
@@ -68,10 +69,31 @@ class SingleChildScrollViewScreen extends StatelessWidget {
     );
   }
 
+  // SingleChildScrollView 퍼포먼스
+  Widget renderPerformance() {
+    return SingleChildScrollView(
+      physics: AlwaysScrollableScrollPhysics(),
+      child: Column(
+        children: numbers
+            .map(
+              (e) => renderContainer(
+                color: rainbowColors[e % rainbowColors.length],
+                index: e,
+              ),
+            )
+            .toList(),
+      ),
+    );
+  }
+
   // 위젯 렌더링
   Widget renderContainer({
     required Color color,
+    int? index,
   }) {
+    if (index != null) {
+      print(index);
+    }
     return Container(
       height: 300,
       color: color,
