@@ -7,7 +7,7 @@ void main() {
       theme: ThemeData(
         useMaterial3: false, // flutter 3.0 이전 버전에서 사용하던 디자인 시스템
       ),
-      home: homeScreen(),
+      home: HomeScreen(),
     ),
   );
 }
