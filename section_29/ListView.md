@@ -44,6 +44,63 @@ Widget renderBuilder() {
 
 ### ListView.separated
 
-```dart
+- itemBuilder와 비슷하게 필요한 아이템만 생성
+- separatorBuilder를 사용하여 아이템 사이에 구분자를 넣어줄 수 있다.
+- 구분자는 마지막 아이템에는 적용되지 않음
 
+```dart
+  // 3. separated - 2번 + 중간 중간에 추가 위젯 넣기
+  Widget renderSeparated() {
+    return ListView.separated(
+      itemCount: 100,
+      itemBuilder: (context, index) {
+        return renderContainer(
+          color: rainbowColors[index % rainbowColors.length],
+          index: index,
+        );
+      },
+      separatorBuilder: (context, index) {
+        index += 1;
+        // 5개의 item마다 배너 보여주기
+        if (index % 5 == 0) {
+          return renderContainer(
+            color: Colors.black,
+            index: index,
+            height: 100,
+          );
+        }
+        return SizedBox(height: 32);
+      },
+    );
+  }
+
+    // 위젯 렌더링
+  Widget renderContainer({
+    required Color color,
+    required int index,
+    double? height,
+  }) {
+    print(index);
+    return Container(
+      height: height ?? 300,
+      color: color,
+      child: Center(
+        child: Text(
+          index.toString(),
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.w700,
+            fontSize: 30.0,
+          ),
+        ),
+      ),
+    );
+  }
 ```
+
+<br>
+
+- 5개의 아이템마다 검정 박스를 보여주는 것을 확인할 수 있음
+- 박스마다 SizedBox를 사용하여 간격을 조절도 가능
+
+![화면-기록-2024-12-01-오후-11 49 54](https://github.com/user-attachments/assets/1ac420db-8d83-488b-b4ba-83408d2f70a6)
