@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:scrollable_widgets/screen/grid_view_screen.dart';
 import 'package:scrollable_widgets/screen/list_view_screen.dart';
+import 'package:scrollable_widgets/screen/reorderable_list_view_screen.dart';
 import 'package:scrollable_widgets/screen/single_child_scroll_view_screen.dart';
 import '../layout/main_layout.dart';
 
@@ -23,6 +25,14 @@ class HomeScreen extends StatelessWidget {
       builder: (_) => ListViewScreen(),
       name: "ListViewScreen",
     ),
+    ScreenModel(
+      builder: (_) => GridViewScreen(),
+      name: "GridViewScreen",
+    ),
+    ScreenModel(
+      builder: (_) => ReorderableListViewScreen(),
+      name: "ReorderableListViewScreen",
+    ),
   ];
 
   HomeScreen({super.key});
@@ -33,19 +43,21 @@ class HomeScreen extends StatelessWidget {
       title: "Home",
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: screens
-              .map((screen) => ElevatedButton(
-                    onPressed: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(builder: screen.builder),
-                      );
-                    },
-                    child: Text(screen.name),
-                  ))
-              .toList(),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: screens
+                .map((screen) => ElevatedButton(
+                      onPressed: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(builder: screen.builder),
+                        );
+                      },
+                      child: Text(screen.name),
+                    ))
+                .toList(),
+          ),
         ),
       ),
     );
