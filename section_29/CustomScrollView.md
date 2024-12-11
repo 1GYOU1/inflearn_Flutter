@@ -107,3 +107,82 @@ SliverGrid renderSliverGridBuilder() {
 
 <img width="747" alt="스크린샷 2024-12-10 오후 11 46 16" src="https://github.com/user-attachments/assets/ad2d2390-1cb1-4f02-ac3d-caba8b0314f6">
 
+<br>
+<br>
+
+### CustomScrollView Appbar
+
+- 
+
+```dart  
+// AppBar
+SliverAppBar renderSliverAppBar() {
+  return SliverAppBar(
+    // 스크롤 했을 때 리스트의 중간에도 AppBar가 내려오게 할 수 있음. 
+    // false 일 때는 최상단까지 스크롤을 해야 AppBar가 보임.
+    floating: false,
+
+    // 완전 고정 (css의 position: fixed)
+    pinned: false,
+
+    // 자석 효과
+    // floating: true에만 사용 가능.
+    snap: true,
+
+    // 맨 위에서 한계 이상으로 스크롤 했을 때 남는 공간을 차지
+    stretch: true,
+    
+    expandedHeight: 200, // 확장된 최대 높이
+    collapsedHeight: 150, // 축소된 최소 높이
+
+    // AppBar 배경 이미지 설정, 스크롤 시 자연스럽게 이미지 사라지는 효과
+    flexibleSpace: FlexibleSpaceBar(
+      background: Image.asset(
+        "asset/img/image_1.jpeg",
+        fit: BoxFit.cover,
+      ),
+      title: Text("FlexibleSpace"),
+    ),
+
+    title: Text("CustomScrollViewScreen"),
+  );
+}
+```
+
+- floating: true
+  - 스크롤 했을 때 리스트의 중간에도 AppBar가 내려오게 할 수 있음.
+  - false 일 때는 최상단까지 스크롤을 해야 AppBar가 보임.
+
+![화면-기록-2024-12-11-오후-11 35 50](https://github.com/user-attachments/assets/7466b74f-e028-44d7-a455-f5a6bf5de887)
+
+<br>
+
+- pinned: true
+  - 완전 고정 (css의 position: fixed)
+
+![화면-기록-2024-12-11-오후-11 39 01](https://github.com/user-attachments/assets/8c1445ec-a18f-4939-8fd7-ca9930ea120e)
+
+<br>
+
+- snap: true
+  - 스크롤하는 방향에 따라 자석 효과가 나타남.
+  - floating: true에만 사용 가능.
+- snap: false
+  - 자석 효과 중간에 멈출 수 있음.
+
+![화면-기록-2024-12-11-오후-11 42 09](https://github.com/user-attachments/assets/d8609078-5586-4e8e-887e-4941a9c8fb11)
+
+<br>
+
+- stretch: true
+  - 맨 위에서 한계 이상으로 스크롤 했을 때 남는 공간을 appbar가 늘어나면서 차지
+  - ios 에서만 적용됨. aos 에서는 원래 안보이는 형태임.
+
+![화면-기록-2024-12-11-오후-11 48 34](https://github.com/user-attachments/assets/e94979a2-e8b1-4b9a-aedf-071ca6159120)
+
+<br>
+
+- flexibleSpace - background 이미지 설정
+
+![무제 (1)](https://github.com/user-attachments/assets/2010010d-b10c-4814-abc0-ef0e95d6400c)
+
