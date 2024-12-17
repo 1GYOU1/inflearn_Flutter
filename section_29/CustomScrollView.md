@@ -112,7 +112,7 @@ SliverGrid renderSliverGridBuilder() {
 
 ### CustomScrollView Appbar
 
-- 
+- 상단 고정 바
 
 ```dart  
 // AppBar
@@ -131,7 +131,7 @@ SliverAppBar renderSliverAppBar() {
 
     // 맨 위에서 한계 이상으로 스크롤 했을 때 남는 공간을 차지
     stretch: true,
-    
+
     expandedHeight: 200, // 확장된 최대 높이
     collapsedHeight: 150, // 축소된 최소 높이
 
@@ -185,4 +185,89 @@ SliverAppBar renderSliverAppBar() {
 - flexibleSpace - background 이미지 설정
 
 ![무제 (1)](https://github.com/user-attachments/assets/2010010d-b10c-4814-abc0-ef0e95d6400c)
+
+
+<br>
+<br>
+
+### CustomScrollView - Header
+
+- 스크롤 시 고정, 높이값에 따라 크기가 변경되는 헤더
+
+```dart
+class _SliverFixedHeaderDelegate extends SliverPersistentHeaderDelegate {
+  final Widget child;
+  final double maxHeight;
+  final double minHeight;
+
+  _SliverFixedHeaderDelegate({
+    required this.child,
+    required this.maxHeight,
+    required this.minHeight,
+  });
+
+  @override
+  Widget build(
+      BuildContext context, double shrinkOffset, bool overlapsContent) {
+    return Container(
+      child: SizedBox.expand(
+        child: child,
+      ),
+    );
+  }
+
+  @override
+  // 최대 높이
+  double get maxExtent => maxHeight;
+
+  @override
+  // 최소 높이
+  double get minExtent => minHeight;
+
+  @override
+  // covariant - 상속된 클래스도 사용가능
+  // oldDelegate - build가 실행이 됐을때 이전 Delegate
+  // this - 새로운 Delegate
+  // shouldRebuild - 새로운 build를 해야할지 말지 결정
+  // false - build 안함 / true - 다시 build 함
+  bool shouldRebuild(_SliverFixedHeaderDelegate oldDelegate) {
+    return oldDelegate.minHeight != minHeight ||
+        oldDelegate.maxHeight != maxHeight ||
+        oldDelegate.child != child;
+  }
+}
+
+SliverPersistentHeader renderHeader() {
+  return SliverPersistentHeader(
+    delegate: _SliverFixedHeaderDelegate(
+      child: Container(
+        color: Colors.black,
+        child: Center(
+          child: Text(
+            "SliverFixedHeader",
+            style: TextStyle(
+              color: Colors.white,
+            ),
+          ),
+        ),
+      ),
+      minHeight: 75,
+      maxHeight: 150,
+    ),
+  );
+}
+```
+
+- 높이의 최대값, 최소값 설정한 만큼 헤더가 보이다가 스크롤 시 사라짐.
+
+![화면-기록-2024-12-17-오후-11 43 57](https://github.com/user-attachments/assets/c740c5f8-bcae-42fb-b7f4-7957d7ab1a7e)
+
+<br>
+
+- pinned: true 
+  - 스크롤 시 고정
+
+![화면-기록-2024-12-17-오후-11 48 45](https://github.com/user-attachments/assets/5f177f34-372b-4417-a32b-37104b7cdba4)
+
+
 
